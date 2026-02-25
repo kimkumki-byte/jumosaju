@@ -1,0 +1,8 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/saju"
+  to = "/.netlify/functions/saju"
+  status = 200
