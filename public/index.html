@@ -1,406 +1,264 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>주모여기사주요 🍶</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root{
-      --yellow-custom:#F6D66D;
-      --green-custom:#1F6F59;
-      --black:#111;
-    }
-    .bg-yellow_custom{ background: var(--yellow-custom); }
-    .bg-green_custom{ background: var(--green-custom); }
-    .border-black{ border-color: var(--black); }
-    .shadow-card{ box-shadow: 0 10px 30px rgba(0,0,0,.12); }
-    .btn-main{
-      @apply w-full rounded-xl bg-black text-white py-3 font-bold active:scale-[0.98] transition;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>주모여기사주요 🍶</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a0a00;--paper:#f5e6c8;--red:#c0392b;--smoke:#8b6914;--wood:#6b3a1f}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background-color:#1a0a00;background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,.02) 40px,rgba(255,255,255,.02) 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(255,255,255,.02) 40px,rgba(255,255,255,.02) 41px);min-height:100vh;font-family:"Nanum Myeongjo",serif;color:var(--ink)}
+.lanterns{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-around;padding:0 20px;z-index:10;pointer-events:none}
+.lantern{width:28px;display:flex;flex-direction:column;align-items:center;animation:swing 3s ease-in-out infinite}
+.lantern:nth-child(2){animation-delay:-1s}.lantern:nth-child(3){animation-delay:-2s}.lantern:nth-child(4){animation-delay:-.5s}.lantern:nth-child(5){animation-delay:-1.5s}
+@keyframes swing{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.ls{width:1px;height:30px;background:#8b6914}
+.lb{width:22px;height:36px;background:radial-gradient(ellipse at 40% 40%,#ff6b35,#c0392b 60%,#8b1a0a);border-radius:50% 50% 50% 50%/40% 40% 60% 60%;box-shadow:0 0 15px rgba(255,100,50,.8),0 0 30px rgba(255,100,50,.3);position:relative}
+.lg{position:absolute;inset:-8px;background:radial-gradient(circle,rgba(255,150,50,.4),transparent 70%);border-radius:50%}
+.lt{width:1px;height:12px;background:#b8860b}
+.wrap{max-width:480px;margin:0 auto;padding:80px 16px 40px}
+.paper{background:var(--paper);background-image:radial-gradient(ellipse at 20% 20%,#f0dba8,transparent 50%),radial-gradient(ellipse at 80% 80%,#e8cfa0,transparent 50%),repeating-linear-gradient(transparent,transparent 27px,rgba(180,140,80,.25) 27px,rgba(180,140,80,.25) 28px);border:2px solid var(--wood);border-radius:4px;padding:24px 20px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.header-card{background:var(--paper);background-image:radial-gradient(ellipse at 20% 20%,#f0dba8,transparent 50%),radial-gradient(ellipse at 80% 80%,#e8cfa0,transparent 50%);border:3px solid var(--wood);border-radius:4px;padding:24px 20px;text-align:center;position:relative;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.header-card::before{content:"❧";position:absolute;top:8px;left:10px;color:var(--red);font-size:16px}
+.header-card::after{content:"❧";position:absolute;top:8px;right:10px;color:var(--red);font-size:16px;transform:scaleX(-1);display:inline-block}
+.jomo-img{margin:10px 0 6px;animation:bobble 2s ease-in-out infinite;display:inline-block}
+.jomo-img img{width:90px;height:90px;object-fit:contain;border-radius:50%;border:3px solid var(--wood);background:#fff9f0}
+@keyframes bobble{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.app-title{font-size:28px;font-weight:800;color:var(--red);letter-spacing:-.5px;text-shadow:1px 1px 0 rgba(0,0,0,.15)}
+.app-sub{font-family:"Gowun Dodum",sans-serif;font-size:12px;color:var(--smoke);margin-top:6px;letter-spacing:1px}
+.bubble{background:#fff9f0;border:2px solid var(--wood);border-radius:12px;padding:14px 16px;margin-bottom:20px;position:relative;font-family:"Gowun Dodum",sans-serif;font-size:14px;color:#3a1a00;line-height:1.7;box-shadow:2px 2px 8px rgba(0,0,0,.3)}
+.bubble::before{content:"";position:absolute;top:-10px;left:30px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:10px solid var(--wood)}
+.bubble::after{content:"";position:absolute;top:-7px;left:32px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:8px solid #fff9f0}
+.cursor{display:inline-block;width:2px;height:14px;background:var(--red);margin-left:2px;animation:blink .8s step-end infinite;vertical-align:middle}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.form-title{font-size:16px;font-weight:700;color:var(--wood);text-align:center;margin-bottom:20px;letter-spacing:2px}
+.form-title span{color:var(--red)}
+.field{margin-bottom:18px}
+.label{display:block;font-size:13px;font-weight:700;color:var(--wood);margin-bottom:6px;letter-spacing:1px}
+.row{display:flex;gap:8px}
+input,select{background:rgba(255,255,255,.65);border:1.5px solid var(--smoke);border-radius:4px;padding:10px 12px;font-family:"Gowun Dodum",sans-serif;font-size:15px;color:var(--ink);outline:none;width:100%;-webkit-appearance:none;appearance:none}
+input:focus,select:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.15)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b3a1f' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-color:rgba(255,255,255,.65);padding-right:28px}
+.gender-row{display:flex;gap:10px}
+.gbtn{flex:1;padding:10px;background:rgba(255,255,255,.5);border:1.5px solid var(--smoke);border-radius:4px;font-family:"Gowun Dodum",sans-serif;font-size:14px;color:var(--smoke);cursor:pointer;text-align:center;transition:all .2s}
+.gbtn.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:700}
+.btn-main{width:100%;padding:16px;background:linear-gradient(180deg,#c0392b,#962d22);border:none;border-radius:4px;color:#f5e6c8;font-family:"Nanum Myeongjo",serif;font-size:18px;font-weight:800;letter-spacing:3px;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.btn-main:hover{background:linear-gradient(180deg,#d44235,#a83228);transform:translateY(-1px)}
+.btn-reset{width:100%;padding:12px;background:transparent;border:2px solid var(--paper);border-radius:4px;color:var(--paper);font-family:"Gowun Dodum",sans-serif;font-size:14px;cursor:pointer;margin-bottom:20px}
+.btn-reset:hover{background:rgba(245,230,200,.1)}
+#loading{display:none;text-align:center;padding:30px}
+#loading.show{display:block}
+.load-icon{font-size:40px;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.95)}}
+.load-txt{font-family:"Gowun Dodum",sans-serif;font-size:14px;color:var(--smoke);margin-top:12px}
+#result{display:none}
+#result.show{display:block;animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.res-hd{background:var(--red);padding:16px 20px;text-align:center;color:var(--paper);font-size:16px;font-weight:700;letter-spacing:2px;margin:-24px -20px 20px}
+.saju-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px}
+.sc{background:rgba(255,255,255,.5);border:1.5px solid var(--smoke);border-radius:4px;padding:8px 4px;text-align:center}
+.sc-lbl{font-size:10px;color:var(--smoke);font-family:"Gowun Dodum",sans-serif;margin-bottom:4px}
+.sc-sky{font-size:20px;font-weight:700;color:var(--ink);line-height:1}
+.sc-earth{font-size:20px;font-weight:700;color:var(--red);line-height:1;margin-top:4px}
+.sc-oh{font-size:9px;color:var(--smoke);font-family:"Gowun Dodum",sans-serif;margin-top:4px}
+.birth-line{text-align:center;font-family:"Gowun Dodum",sans-serif;font-size:12px;color:var(--smoke);margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)}
+.section{margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed rgba(107,58,31,.3)}
+.section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.sec-title{font-size:15px;font-weight:700;color:var(--red);margin-bottom:10px}
+.sec-body{font-family:"Gowun Dodum",sans-serif;font-size:14px;color:#3a1a00;line-height:2}
+.footer{text-align:center;color:rgba(245,230,200,.3);font-family:"Gowun Dodum",sans-serif;font-size:11px;padding-bottom:20px;letter-spacing:1px}
+</style>
 </head>
-<body class="bg-zinc-100 min-h-screen">
-  <div class="max-w-sm mx-auto bg-white min-h-screen shadow-card">
-    <!-- Header -->
-    <div class="p-4 border-b border-black text-center bg-yellow_custom">
-      <h1 class="text-lg font-bold mb-1">주모여기사주요 🍶</h1>
-      <p class="text-xs text-gray-700">만세력은 정확하게, 해설은 구수하게</p>
-    </div>
-
-    <!-- Form -->
-    <div id="formSection" class="p-4 space-y-4">
-      <div class="space-y-2">
-        <label class="text-sm font-semibold">이름</label>
-        <input id="nameInput" class="w-full border border-black rounded-lg px-3 py-2" placeholder="이름을 적어보슈" />
-      </div>
-
-      <div class="space-y-2">
-        <label class="text-sm font-semibold">생년월일</label>
-        <input id="dateInput" type="date" class="w-full border border-black rounded-lg px-3 py-2" />
-        <div class="flex gap-2">
-          <button id="solarBtn" class="flex-1 border border-black rounded-lg py-2 text-sm font-semibold bg-black text-white">양력</button>
-          <button id="lunarBtn" class="flex-1 border border-black rounded-lg py-2 text-sm font-semibold bg-white">음력</button>
-          <button id="leapBtn" class="flex-1 border border-black rounded-lg py-2 text-sm font-semibold bg-white">윤달</button>
-        </div>
-        <p class="text-[11px] text-gray-500">윤달은 음력일 때만 의미 있수다.</p>
-      </div>
-
-      <div class="space-y-2">
-        <label class="text-sm font-semibold">시간</label>
-        <select id="timeMode" class="w-full border border-black rounded-lg px-3 py-2">
-          <option value="unknown">시간 모름</option>
-          <option value="known">시간 선택</option>
-        </select>
-        <input id="timeInput" type="time" class="w-full border border-black rounded-lg px-3 py-2 hidden" value="12:00" />
-      </div>
-
-      <div class="space-y-2">
-        <label class="text-sm font-semibold">성별</label>
-        <div class="flex gap-2">
-          <button id="maleBtn" class="flex-1 border border-black rounded-lg py-2 text-sm font-semibold bg-black text-white">도령</button>
-          <button id="femaleBtn" class="flex-1 border border-black rounded-lg py-2 text-sm font-semibold bg-white">아가씨</button>
-        </div>
-      </div>
-
-      <div class="space-y-2">
-        <label class="text-sm font-semibold">음/양</label>
-        <div class="flex gap-2">
-          <button id="yinBtn" class="flex-1 border border-black rounded-lg py-2 text-sm font-semibold bg-white">음</button>
-          <button id="yangBtn" class="flex-1 border border-black rounded-lg py-2 text-sm font-semibold bg-black text-white">양</button>
-        </div>
-        <p class="text-[11px] text-gray-500">여기서는 '풀이 스타일(말의 결)'에만 쓰고, 만세력 계산값은 생년월일/시간으로 결정돼요.</p>
-      </div>
-
-      <button id="submitBtn" class="w-full rounded-xl bg-black text-white py-3 font-bold active:scale-[0.98] transition">🍶 주모! 사주 좀 봐줘!</button>
-      <button id="resetBtn" class="w-full rounded-xl border border-black py-3 font-bold hidden">처음부터 다시 보기</button>
-
-      <div class="text-center text-xs text-gray-500 pt-2">
-        재미로만 보슈~ (의학/법률/투자 결정은 전문가와 상의!)
-      </div>
-    </div>
-
-    <!-- Loading -->
-    <div id="loading" class="p-6 hidden">
-      <div class="rounded-2xl border border-black p-5 bg-yellow_custom">
-        <div class="font-bold mb-2">주모가 향불 피우는 중이수다…</div>
-        <div id="loadingText" class="text-sm text-gray-800"></div>
-      </div>
-    </div>
-
-    <!-- Result -->
-    <div id="result" class="hidden">
-      <!-- top summary -->
-      <div class="p-4 border-b border-black text-center bg-yellow_custom">
-        <h1 id="titleName" class="text-lg font-bold mb-2"></h1>
-        <div class="mt-2 flex flex-col items-center gap-2 text-xs">
-          <div id="tagRow1" class="flex flex-wrap justify-center gap-2"></div>
-          <div id="tagRow2" class="flex flex-wrap justify-center gap-2"></div>
-        </div>
-      </div>
-
-      <!-- 만세력 -->
-      <div class="p-2 bg-green_custom">
-        <h2 class="text-lg font-bold text-white text-center">만세력</h2>
-      </div>
-
-      <div id="manseWrap"></div>
-
-      <!-- 사주해설 -->
-      <div class="p-2 bg-green_custom">
-        <h2 class="text-lg font-bold text-white text-center">사주해설</h2>
-      </div>
-
-      <div class="border-b border-gray-300">
-        <div class="mx-auto max-w-sm py-3 px-3 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
-          <span>각 제목을 클릭하면 해설이 펼쳐져요</span>
-        </div>
-      </div>
-
-      <div id="readingAccordion" class="w-full border-b border-black"></div>
-    </div>
+<body>
+<div class="lanterns">
+  <div class="lantern"><div class="ls"></div><div class="lb"><div class="lg"></div></div><div class="lt"></div></div>
+  <div class="lantern"><div class="ls"></div><div class="lb"><div class="lg"></div></div><div class="lt"></div></div>
+  <div class="lantern"><div class="ls"></div><div class="lb"><div class="lg"></div></div><div class="lt"></div></div>
+  <div class="lantern"><div class="ls"></div><div class="lb"><div class="lg"></div></div><div class="lt"></div></div>
+  <div class="lantern"><div class="ls"></div><div class="lb"><div class="lg"></div></div><div class="lt"></div></div>
+</div>
+<div class="wrap">
+  <div class="header-card">
+    <div class="jomo-img"><img src="data:image/png;base64,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" alt="주모"></div>
+    <div class="app-title">주모여기사주요!</div>
+    <div class="app-sub">막걸리 한 잔에 팔자 한 사발 🍶</div>
   </div>
-
+  <div class="bubble"><span id="speech">어이~ 손님! 어서오슈~ 오늘 어디서 바람이 불어왔수? 어디 생년월일 한번 내보슈, 주모가 팔자 한번 봐드리리다!</span><span class="cursor"></span></div>
+  <div class="paper" id="formSection">
+    <div class="form-title">📜 사주 <span>적어내기</span></div>
+    <div class="field">
+      <label class="label">📛 이름</label>
+      <input type="text" id="nameInput" placeholder="홍길동" maxlength="10">
+    </div>
+    <div class="field">
+      <label class="label">⚥ 성별</label>
+      <div class="gender-row">
+        <div class="gbtn on" onclick="setGender(this,'남')">🧔 도령</div>
+        <div class="gbtn" onclick="setGender(this,'여')">👩 아가씨</div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">📅 생년월일</label>
+      <div class="row">
+        <input type="number" id="yearInput" placeholder="년도 (예:1990)" min="1900" max="2025" style="flex:2">
+        <select id="monthInput" style="flex:1">
+          <option value="">월</option>
+          <option value="1">1월</option><option value="2">2월</option><option value="3">3월</option>
+          <option value="4">4월</option><option value="5">5월</option><option value="6">6월</option>
+          <option value="7">7월</option><option value="8">8월</option><option value="9">9월</option>
+          <option value="10">10월</option><option value="11">11월</option><option value="12">12월</option>
+        </select>
+        <select id="dayInput" style="flex:1"><option value="">일</option></select>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:20px">
+      <label class="label">🕐 태어난 시간 <span style="font-size:10px;color:#aaa;font-weight:400">(모르면 모름)</span></label>
+      <select id="hourInput">
+        <option value="모름">⏰ 모름</option>
+        <option value="자시(23~01시)">🌑 자시 (밤 11시~새벽 1시)</option>
+        <option value="축시(01~03시)">🌒 축시 (새벽 1시~3시)</option>
+        <option value="인시(03~05시)">🌓 인시 (새벽 3시~5시)</option>
+        <option value="묘시(05~07시)">🌅 묘시 (새벽 5시~7시)</option>
+        <option value="진시(07~09시)">☀️ 진시 (오전 7시~9시)</option>
+        <option value="사시(09~11시)">🌤 사시 (오전 9시~11시)</option>
+        <option value="오시(11~13시)">☀️ 오시 (오전 11시~오후 1시)</option>
+        <option value="미시(13~15시)">🌤 미시 (오후 1시~3시)</option>
+        <option value="신시(15~17시)">🌇 신시 (오후 3시~5시)</option>
+        <option value="유시(17~19시)">🌆 유시 (오후 5시~7시)</option>
+        <option value="술시(19~21시)">🌙 술시 (오후 7시~9시)</option>
+        <option value="해시(21~23시)">🌕 해시 (밤 9시~11시)</option>
+      </select>
+    </div>
+    <button class="btn-main" onclick="getSaju()">🍶 주모! 사주 좀 봐줘!</button>
+  </div>
+  <div class="paper" id="loading">
+    <div class="load-icon">🔮</div>
+    <div class="load-txt" id="loadTxt">주모가 향불을 피우고 있수다...</div>
+  </div>
+  <div class="paper" id="result">
+    <div class="res-hd">🎴 손님의 사주풀이 🎴</div>
+    <div id="resultBody"></div>
+  </div>
+  <button class="btn-reset" id="resetBtn" style="display:none" onclick="resetApp()">↩ 다시 보기</button>
+  <div class="footer">주모여기사주요 🍶 · 사주풀이 · 재미로만 보슈~</div>
+</div>
 <script>
-  // ----- state -----
-  let calendar = 'solar'; // solar | lunar
-  let isLeapMonth = false;
-  let sex = 'M'; // M | F
-  let yinYangStyle = 'yang'; // yin | yang (style only)
-  const LOADS = [
-    "주모가 향불을 피우고 있수다...",
-    "팔자를 들여다보는 중이수...",
-    "막걸리 한 잔 따르며 점을 치는 중...",
-    "천간 지지를 살펴보고 있수다...",
-    "주모가 눈을 감고 집중 중이수..."
-  ];
-
-  // ----- ui helpers -----
-  function setBtnActive(btn, active){
-    if(active){
-      btn.classList.add('bg-black','text-white');
-      btn.classList.remove('bg-white','text-black');
+let gender='남';
+document.getElementById('monthInput').addEventListener('change',fillDays);
+document.getElementById('yearInput').addEventListener('input',fillDays);
+function fillDays(){
+  const y=parseInt(document.getElementById('yearInput').value)||2000;
+  const m=parseInt(document.getElementById('monthInput').value);
+  const sel=document.getElementById('dayInput');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">일</option>';
+  if(!m)return;
+  for(let i=1;i<=new Date(y,m,0).getDate();i++){
+    const o=document.createElement('option');o.value=i;o.textContent=i+'일';sel.appendChild(o);
+  }
+  if(prev)sel.value=prev;
+}
+function setGender(el,g){
+  gender=g;
+  document.querySelectorAll('.gbtn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+}
+const CGK=["갑","을","병","정","무","기","경","신","임","계"];
+const CGH=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+const JJK=["자","축","인","묘","진","사","오","미","신","유","술","해"];
+const JJH=["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+const OHC=["목","목","화","화","토","토","금","금","수","수"];
+const OHJ=["수","토","목","목","토","화","화","토","금","금","토","수"];
+const ANI=["🐭쥐","🐮소","🐯호랑이","🐰토끼","🐲용","🐍뱀","🐴말","🐏양","🐵원숭이","🐓닭","🐶개","🐷돼지"];
+const LOADS=["주모가 향불을 피우고 있수다...","팔자를 들여다보는 중이수...","막걸리 한 잔 따르며 점을 치는 중...","천간 지지를 살펴보고 있수다...","주모가 눈을 감고 집중 중이수..."];
+const EMOJIS=["🌟","💪","🎯","💕","💰","🌿","🍶"];
+const SYS=`당신은 조선시대 주막에서 사주풀이를 봐주는 구수하고 친근한 주모입니다. 말투 규칙: 주막 주모 특유의 구수한 사투리. 필수 표현: "~수다","~이수","어이구","에그머니나","허허","아이구야","어이~". 손님 이름을 자주 부르기. 막걸리/주막/장터 비유 사용. 재미있고 유머있게.
+풀이 구조(7섹션, 각각 이모지+제목 한 줄로 시작):
+🌟 첫인상
+💪 타고난 기질과 성격
+🎯 올해의 운세
+💕 인연운과 사랑운
+💰 재물운과 직업운
+🌿 건강운
+🍶 주모의 한마디
+각 섹션 3~5줄. 마지막은 희망차고 따뜻하게.`;
+function mkP(n){const ci=((n%10)+10)%10,ji=((n%12)+12)%12;return{sky:CGH[ci],earth:JJH[ji],oc:OHC[ci],oj:OHJ[ji],label:CGK[ci]+"("+CGH[ci]+")/"+JJK[ji]+"("+JJH[ji]+")"}}
+function calcSaju(y,m,d,h){
+  const yp=mkP(y-4),mp=mkP((y-4)*12+(m-1));
+  const bd=Math.floor((y-1900)*365.25)+Math.floor((m-1)*30.44)+d+10;
+  const dp=mkP(bd);
+  const hm={"자시":0,"축시":1,"인시":2,"묘시":3,"진시":4,"사시":5,"오시":6,"미시":7,"신시":8,"유시":9,"술시":10,"해시":11};
+  const hk=Object.keys(hm).find(k=>h.startsWith(k));
+  return{yp,mp,dp,hp:hk!==undefined?mkP(bd*12+hm[hk]):null};
+}
+async function getSaju(){
+  const name=document.getElementById('nameInput').value.trim()||'손님';
+  const y=parseInt(document.getElementById('yearInput').value);
+  const m=parseInt(document.getElementById('monthInput').value);
+  const d=parseInt(document.getElementById('dayInput').value);
+  const h=document.getElementById('hourInput').value;
+  if(!y||y<1900||y>2025){alert('태어난 연도를 올바르게 적어주슈!');return;}
+  if(!m){alert('태어난 달을 골라주슈!');return;}
+  if(!d){alert('태어난 날을 골라주슈!');return;}
+  document.getElementById('formSection').style.display='none';
+  document.getElementById('result').classList.remove('show');
+  const loadEl=document.getElementById('loading');
+  loadEl.style.display='block';
+  let li=0;
+  const lt=setInterval(()=>{document.getElementById('loadTxt').textContent=LOADS[li++%LOADS.length];},1800);
+  const saju=calcSaju(y,m,d,h);
+  const animal=ANI[((y-4)%12+12)%12];
+  const desc=`이름:${name}/성별:${gender}/생년월일:${y}년${m}월${d}일/태어난시:${h}\n사주:\n연주:${saju.yp.label}[천간:${saju.yp.oc} 지지:${saju.yp.oj}]\n월주:${saju.mp.label}[천간:${saju.mp.oc} 지지:${saju.mp.oj}]\n일주:${saju.dp.label}[천간:${saju.dp.oc} 지지:${saju.dp.oj}]\n시주:${saju.hp?saju.hp.label:"미상"}\n띠:${animal}`;
+  try{
+    const res=await fetch('/api/saju',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1400,system:SYS,messages:[{role:'user',content:'다음 사주로 풀이:\n'+desc}]})
+    });
+    const data=await res.json();
+    if(!res.ok)throw new Error((data.error&&data.error.message)||'오류 '+res.status);
+    const text=data.content[0].text;
+    clearInterval(lt);
+    loadEl.style.display='none';
+    let html='<div class="saju-grid">';
+    ['연주','월주','일주','시주'].forEach((lbl,i)=>{
+      const p=[saju.yp,saju.mp,saju.dp,saju.hp][i];
+      html+=`<div class="sc"><div class="sc-lbl">${lbl}</div><div class="sc-sky">${p?p.sky:'?'}</div><div class="sc-earth">${p?p.earth:'?'}</div><div class="sc-oh">${p?p.oc+'/'+p.oj:'-'}</div></div>`;
+    });
+    html+=`</div><div class="birth-line">${animal} | ${y}년 ${m}월 ${d}일${h!=='모름'?' '+h:''}</div>`;
+    const lines=text.split('\n');
+    let sections=[],cur=null;
+    for(const line of lines){
+      const t=line.trim();if(!t)continue;
+      if(EMOJIS.some(e=>t.startsWith(e))){if(cur)sections.push(cur);cur={title:t,body:[]};}
+      else if(cur)cur.body.push(t);
+    }
+    if(cur)sections.push(cur);
+    if(sections.length>=2){
+      sections.forEach(s=>{html+=`<div class="section"><div class="sec-title">${s.title}</div><div class="sec-body">${s.body.join('<br>')}</div></div>`;});
     }else{
-      btn.classList.remove('bg-black','text-white');
-      btn.classList.add('bg-white','text-black');
+      html+=`<div class="section"><div class="sec-body">${text.replace(/\n/g,'<br>')}</div></div>`;
     }
+    document.getElementById('resultBody').innerHTML=html;
+    document.getElementById('result').classList.add('show');
+    document.getElementById('resetBtn').style.display='block';
+    document.getElementById('speech').textContent='어이구~ 다 봤수! 팔자 한 사발 드렸으니 막걸리 한 잔 하고 가슈~ 🍶';
+    document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(err){
+    clearInterval(lt);
+    loadEl.style.display='none';
+    document.getElementById('formSection').style.display='block';
+    alert('아이구~ 오류가 났수다!\n'+err.message);
   }
-  function tag(text){
-    const s = document.createElement('span');
-    s.className = "inline-flex items-center rounded-full border border-yellow-500 bg-yellow-400/50 px-3 py-1 text-gray-800";
-    s.textContent = text;
-    return s;
-  }
-  function escapeHtml(s){
-    return String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  }
-
-  // ----- bind buttons -----
-  const solarBtn = document.getElementById('solarBtn');
-  const lunarBtn = document.getElementById('lunarBtn');
-  const leapBtn = document.getElementById('leapBtn');
-  solarBtn.addEventListener('click', (e)=>{ e.preventDefault(); calendar='solar'; isLeapMonth=false; setBtnActive(solarBtn,true); setBtnActive(lunarBtn,false); leapBtn.classList.remove('bg-black','text-white'); leapBtn.classList.add('bg-white'); });
-  lunarBtn.addEventListener('click', (e)=>{ e.preventDefault(); calendar='lunar'; setBtnActive(lunarBtn,true); setBtnActive(solarBtn,false); });
-  leapBtn.addEventListener('click', (e)=>{ e.preventDefault(); isLeapMonth=!isLeapMonth; if(isLeapMonth){ leapBtn.classList.add('bg-black','text-white'); leapBtn.classList.remove('bg-white'); } else { leapBtn.classList.remove('bg-black','text-white'); leapBtn.classList.add('bg-white'); } });
-
-  const maleBtn = document.getElementById('maleBtn');
-  const femaleBtn = document.getElementById('femaleBtn');
-  maleBtn.addEventListener('click', (e)=>{ e.preventDefault(); sex='M'; setBtnActive(maleBtn,true); setBtnActive(femaleBtn,false); });
-  femaleBtn.addEventListener('click', (e)=>{ e.preventDefault(); sex='F'; setBtnActive(femaleBtn,true); setBtnActive(maleBtn,false); });
-
-  const yinBtn = document.getElementById('yinBtn');
-  const yangBtn = document.getElementById('yangBtn');
-  yinBtn.addEventListener('click', (e)=>{ e.preventDefault(); yinYangStyle='yin'; setBtnActive(yinBtn,true); setBtnActive(yangBtn,false); });
-  yangBtn.addEventListener('click', (e)=>{ e.preventDefault(); yinYangStyle='yang'; setBtnActive(yangBtn,true); setBtnActive(yinBtn,false); });
-
-  const timeMode = document.getElementById('timeMode');
-  const timeInput = document.getElementById('timeInput');
-  timeMode.addEventListener('change', ()=>{
-    if(timeMode.value==='known'){ timeInput.classList.remove('hidden'); }
-    else { timeInput.classList.add('hidden'); }
-  });
-
-  document.getElementById('resetBtn').addEventListener('click', ()=>{
-    document.getElementById('result').classList.add('hidden');
-    document.getElementById('formSection').classList.remove('hidden');
-    document.getElementById('resetBtn').classList.add('hidden');
-    window.scrollTo({top:0,behavior:'smooth'});
-  });
-
-  // ----- render helpers -----
-  function renderManse(pillars, details){
-    // columns: hour/day/month/year (like sample)
-    const cols = [
-      { key:'hour', label:'시주' },
-      { key:'day', label:'일주' },
-      { key:'month', label:'월주' },
-      { key:'year', label:'연주' }
-    ];
-    const colorMap = {
-      year: { bg:'rgb(255, 203, 97)', fg:'rgb(87, 86, 79)' },
-      month:{ bg:'rgb(155, 126, 189)', fg:'rgb(248, 250, 252)' },
-      day:  { bg:'rgb(100, 127, 188)', fg:'rgb(246, 245, 242)' },
-      hour: { bg:'rgb(243, 244, 246)', fg:'rgb(31, 41, 55)' }
-    };
-
-    const wrap = document.createElement('div');
-
-    // top grid (천간/지지)
-    const grid = document.createElement('div');
-    grid.className = "grid grid-cols-4 border-gray-600 border-b";
-
-    cols.forEach(c=>{
-      const p = pillars[c.key];
-      const card = document.createElement('div');
-      card.className = "flex flex-col items-center border-x border-white";
-
-      const head = document.createElement('div');
-      head.className = "p-2 text-center font-semibold text-gray-600 text-sm border-b border-white";
-      head.textContent = c.label;
-      card.appendChild(head);
-
-      const cm = colorMap[c.key];
-      const stem = document.createElement('div');
-      stem.className = "p-3 text-center w-full flex-grow flex flex-col justify-center transition-colors duration-300";
-      stem.style.backgroundColor = cm.bg;
-      stem.style.color = cm.fg;
-      stem.innerHTML = p ? `
-        <div class="text-3xl font-bold">${escapeHtml(p.stemHan)}</div>
-        <div class="text-xs">${escapeHtml(p.stemKr)}</div>
-        <div class="text-xs">${escapeHtml(p.shishen?.gan || '')}</div>
-      ` : `
-        <div class="text-3xl font-bold">-</div>
-        <div class="text-xs">-</div>
-        <div class="text-xs"></div>
-      `;
-      card.appendChild(stem);
-
-      const branch = document.createElement('div');
-      branch.className = "p-3 text-center w-full flex-grow flex flex-col justify-center border-t border-white transition-colors duration-300";
-      branch.style.backgroundColor = cm.bg;
-      branch.style.color = cm.fg;
-      branch.innerHTML = p ? `
-        <div class="text-3xl font-bold">${escapeHtml(p.branchHan)}</div>
-        <div class="text-xs">${escapeHtml(p.branchKr)}</div>
-        <div class="text-xs">${escapeHtml(p.shishen?.zhi || '')}</div>
-      ` : `
-        <div class="text-3xl font-bold">-</div>
-        <div class="text-xs">-</div>
-        <div class="text-xs"></div>
-      `;
-      card.appendChild(branch);
-
-      grid.appendChild(card);
-    });
-    wrap.appendChild(grid);
-
-    // hidden stems row
-    const row1 = document.createElement('div');
-    row1.className = "grid grid-cols-4 items-stretch border-b border-gray-600";
-    cols.forEach(c=>{
-      const cell = document.createElement('div');
-      cell.className = "p-2 text-center text-xs text-gray-600 flex items-center justify-center";
-      const list = details?.hideGanKr?.[c.key] || [];
-      cell.innerHTML = list.length ? `<div>${list.map(x=>`<div>${escapeHtml(x)}</div>`).join('')}</div>` : `<div>-</div>`;
-      row1.appendChild(cell);
-    });
-    wrap.appendChild(row1);
-
-    // 디시 row
-    const row2 = document.createElement('div');
-    row2.className = "grid grid-cols-4 items-stretch border-b border-gray-600";
-    cols.forEach(c=>{
-      const cell = document.createElement('div');
-      cell.className = "p-2 text-center text-xs text-gray-600 flex items-center justify-center";
-      const v = details?.dishi?.[c.key] || '-';
-      cell.innerHTML = `<div><div>${escapeHtml(v)}</div></div>`;
-      row2.appendChild(cell);
-    });
-    wrap.appendChild(row2);
-
-    // 공망 row
-    const row3 = document.createElement('div');
-    row3.className = "grid grid-cols-4 items-stretch border-b border-gray-600";
-    cols.forEach(c=>{
-      const cell = document.createElement('div');
-      cell.className = "p-2 text-center text-xs text-gray-600 flex items-center justify-center";
-      const v = details?.xunkong?.[c.key] || '-';
-      cell.innerHTML = `<div><div>${escapeHtml(v)}</div></div>`;
-      row3.appendChild(cell);
-    });
-    wrap.appendChild(row3);
-
-    return wrap;
-  }
-
-  function renderAccordion(sections){
-    const root = document.getElementById('readingAccordion');
-    root.innerHTML = "";
-    sections.forEach((s, idx)=>{
-      const item = document.createElement('details');
-      item.className = "border-b border-gray-300";
-      if(idx===0) item.open = true;
-
-      const summary = document.createElement('summary');
-      summary.className = "list-none cursor-pointer group text-lg font-bold text-gray-800 hover:underline text-left p-4 transition-all duration-200 active:scale-[0.98] flex items-center gap-3";
-      summary.innerHTML = `
-        <span class="w-5 h-5 flex items-center justify-center text-pink-500 flex-shrink-0">${escapeHtml(s.icon || '✨')}</span>
-        <span class="flex-1">${escapeHtml(s.title || '')}</span>
-        <span class="text-gray-500 transition-transform duration-300 group-open:rotate-180">▾</span>
-      `;
-      item.appendChild(summary);
-
-      const body = document.createElement('div');
-      body.className = "text-base text-gray-700 whitespace-pre-wrap leading-relaxed px-4 pb-4 pt-0 space-y-4";
-      body.textContent = s.body || '';
-      item.appendChild(body);
-
-      root.appendChild(item);
-    });
-  }
-
-  async function getSaju(){
-    const name = document.getElementById('nameInput').value.trim();
-    const birthDate = document.getElementById('dateInput').value;
-    const timeKnown = (document.getElementById('timeMode').value === 'known');
-    const birthTime = timeKnown ? document.getElementById('timeInput').value : null;
-
-    if(!birthDate){
-      alert("생년월일을 먼저 골라주슈!");
-      return;
-    }
-
-    // ui: loading
-    document.getElementById('formSection').classList.add('hidden');
-    const loadEl = document.getElementById('loading');
-    loadEl.classList.remove('hidden');
-    const loadingText = document.getElementById('loadingText');
-    let i = 0;
-    loadingText.textContent = LOADS[0];
-    const lt = setInterval(()=>{ i=(i+1)%LOADS.length; loadingText.textContent = LOADS[i]; }, 700);
-
-    try{
-      const res = await fetch('/api/saju', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({
-          name: name || null,
-          calendar,
-          isLeapMonth: calendar==='lunar' ? isLeapMonth : false,
-          birthDate,
-          birthTime,
-          sex,
-          yinYangStyle
-        })
-      });
-
-      const data = await res.json().catch(()=>null);
-      if(!res.ok || !data || !data.ok){
-        const msg = data?.error?.message || ("서버 응답이 이상하수다 ("+res.status+")");
-        throw new Error(msg);
-      }
-
-      clearInterval(lt);
-      loadEl.classList.add('hidden');
-
-      // render result
-      const r = data.data;
-      document.getElementById('result').classList.remove('hidden');
-      document.getElementById('resetBtn').classList.remove('hidden');
-
-      const titleName = document.getElementById('titleName');
-      titleName.textContent = (name ? name + "님의 사주해설" : "사주해설");
-
-      const tagRow1 = document.getElementById('tagRow1');
-      const tagRow2 = document.getElementById('tagRow2');
-      tagRow1.innerHTML = "";
-      tagRow2.innerHTML = "";
-
-      tagRow1.appendChild(tag(r.meta.solarDate));
-      tagRow1.appendChild(tag(calendar==='solar' ? '양력' : '음력'));
-      if(calendar==='lunar' && r.meta.isLeapMonth) tagRow1.appendChild(tag('윤달'));
-      tagRow1.appendChild(tag(r.meta.timeKnown ? r.meta.timeText : '시간 모름'));
-
-      tagRow2.appendChild(tag(sex==='M' ? '도령' : '아가씨'));
-
-      // 만세력
-      const manseWrap = document.getElementById('manseWrap');
-      manseWrap.innerHTML = "";
-      manseWrap.appendChild(renderManse(r.pillars, r.details));
-
-      // 해설
-      renderAccordion(r.readingSections || []);
-
-      window.scrollTo({top:0,behavior:'smooth'});
-    }catch(err){
-      clearInterval(lt);
-      loadEl.classList.add('hidden');
-      document.getElementById('formSection').classList.remove('hidden');
-      alert("아이구~ 오류가 났수다!\n" + err.message);
-    }
-  }
-
-  document.getElementById('submitBtn').addEventListener('click', (e)=>{ e.preventDefault(); getSaju(); });
+}
+function resetApp(){
+  document.getElementById('formSection').style.display='block';
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('resetBtn').style.display='none';
+  document.getElementById('speech').textContent='어이~ 손님! 어서오슈~ 오늘 어디서 바람이 불어왔수? 어디 생년월일 한번 내보슈, 주모가 팔자 한번 봐드리리다!';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 </script>
 </body>
 </html>
