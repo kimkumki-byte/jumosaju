@@ -1,3 +1,37 @@
+const https = require('https');
+
+function callAnthropic(apiKey, prompt) {
+  return new Promise((resolve, reject) => {
+    const bodyStr = JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2000,
+      messages: [{ role: 'user', content: prompt }]
+    });
+    const options = {
+      hostname: 'api.anthropic.com',
+      path: '/v1/messages',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'Content-Length': Buffer.byteLength(bodyStr)
+      }
+    };
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try { resolve(JSON.parse(data)); }
+        catch(e) { reject(new Error('JSON parse error: ' + data.slice(0,200))); }
+      });
+    });
+    req.on('error', reject);
+    req.write(bodyStr);
+    req.end();
+  });
+}
+
 // =============================================
 // 주모여기사주요 - 명리학 사주 계산 엔진
 // =============================================
@@ -524,22 +558,8 @@ exports.handler = async function(event) {
     // LLM 해설 요청
     const prompt = buildPrompt(sajuData, name || '손님');
 
-    const llmRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    const llmData = await llmRes.json();
-    if (!llmRes.ok) throw new Error((llmData.error && llmData.error.message) || '오류 ' + llmRes.status);
+    const llmData = await callAnthropic(apiKey, prompt);
+    if (llmData.error) throw new Error(llmData.error.message || '오류');
 
     return {
       statusCode: 200,
