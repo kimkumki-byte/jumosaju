@@ -52,12 +52,12 @@ function getSipseong(ilgan_idx, target_idx, isJiji) {
 
 function getOhaengRel(from, to) {
   const gen = {'목':'화','화':'토','토':'금','금':'수','수':'목'};
-  const克map = {'목':'토','토':'수','수':'화','화':'금','금':'목'};
+  const geukMap = {'목':'토','토':'수','수':'화','화':'금','금':'목'};
   if (from === to) return 'same';
   if (gen[from] === to) return 'gen';
-  if (克map[from] === to) return '我克';
+  if (geukMap[from] === to) return '我克';
   if (gen[to] === from) return 'gen我';
-  if (克map[to] === from) return '克我';
+  if (geukMap[to] === from) return '克我';
   return '-';
 }
 
@@ -328,7 +328,7 @@ function checkShingang(pillars, ilgan_idx, ohaengCount) {
 function guessYongshin(ilgan_idx, ohaengCount, shingang) {
   const ilOh = CG_OHAENG[ilgan_idx];
   const genMap = {목:'수',화:'목',토:'화',금:'토',수:'금'};
-  const극Map = {목:'금',화:'수',토:'목',금:'화',수:'토'};
+  const geukMap2 = {목:'금',화:'수',토:'목',금:'화',수:'토'};
 
   if (shingang.result === '신강') {
     // 신강 → 식상/재성/관성으로 설기
