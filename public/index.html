@@ -68,6 +68,26 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .sec-title{font-size:15px;font-weight:700;color:var(--red);margin-bottom:10px}
 .sec-body{font-family:"Gowun Dodum",sans-serif;font-size:14px;color:#3a1a00;line-height:2}
 .footer{text-align:center;color:rgba(245,230,200,.3);font-family:"Gowun Dodum",sans-serif;font-size:11px;padding-bottom:20px;letter-spacing:1px}
+
+.mini-meta{
+  margin:10px 2px 14px;
+  padding:10px 12px;
+  background:rgba(0,0,0,0.03);
+  border:1px dashed rgba(0,0,0,0.15);
+  border-radius:12px;
+  font-size:12px;
+  color:#555;
+}
+.reading{
+  margin-top:10px;
+  padding:14px 14px;
+  background:#fffdf7;
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:14px;
+  line-height:1.65;
+  font-size:14px;
+  color:#2b2b2b;
+}
 </style>
 </head>
 <body>
@@ -98,6 +118,20 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         <div class="gbtn" onclick="setGender(this,'여')">👩 아가씨</div>
       </div>
     </div>
+
+    <div class="field">
+      <label class="label">🗓️ 양력/음력</label>
+      <div class="gender-row">
+        <div class="gbtn on" id="calSolar" onclick="setCalendar(this,'solar')">☀️ 양력</div>
+        <div class="gbtn" id="calLunar" onclick="setCalendar(this,'lunar')">🌙 음력</div>
+      </div>
+      <div id="leapWrap" style="display:none;margin-top:8px">
+        <label style="font-size:12px;color:#666;display:flex;gap:8px;align-items:center">
+          <input type="checkbox" id="leapInput"> 윤달이에요
+        </label>
+      </div>
+    </div>
+
     <div class="field">
       <label class="label">📅 생년월일</label>
       <div class="row">
@@ -141,10 +175,11 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div id="resultBody"></div>
   </div>
   <button class="btn-reset" id="resetBtn" style="display:none" onclick="resetApp()">↩ 다시 보기</button>
-  <div class="footer">주모여기사주요 🍶 · 사주풀이 · 재미로만 보슈~</div>
+  <div class="footer">주모여기사주요 🍶 · AI 사주풀이 · 재미로만 보슈~</div>
 </div>
 <script>
 let gender='남';
+let calendar='solar';
 document.getElementById('monthInput').addEventListener('change',fillDays);
 document.getElementById('yearInput').addEventListener('input',fillDays);
 function fillDays(){
@@ -154,7 +189,8 @@ function fillDays(){
   const prev=sel.value;
   sel.innerHTML='<option value="">일</option>';
   if(!m)return;
-  for(let i=1;i<=new Date(y,m,0).getDate();i++){
+  const maxDays = (calendar==='lunar') ? 30 : new Date(y,m,0).getDate();
+  for(let i=1;i<=maxDays;i++){
     const o=document.createElement('option');o.value=i;o.textContent=i+'일';sel.appendChild(o);
   }
   if(prev)sel.value=prev;
@@ -164,73 +200,126 @@ function setGender(el,g){
   document.querySelectorAll('.gbtn').forEach(b=>b.classList.remove('on'));
   el.classList.add('on');
 }
+
+function setCalendar(el,val){
+  calendar=val;
+  // toggle buttons
+  document.getElementById('calSolar').classList.toggle('on', val==='solar');
+  document.getElementById('calLunar').classList.toggle('on', val==='lunar');
+  // show leap only for lunar
+  document.getElementById('leapWrap').style.display = (val==='lunar') ? 'block' : 'none';
+  if(val!=='lunar') document.getElementById('leapInput').checked=false;
+  fillDays();
+}
 const CGK=["갑","을","병","정","무","기","경","신","임","계"];
 const CGH=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
 const JJK=["자","축","인","묘","진","사","오","미","신","유","술","해"];
 const JJH=["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
 const OHC=["목","목","화","화","토","토","금","금","수","수"];
 const OHJ=["수","토","목","목","토","화","화","토","금","금","토","수"];
-const ANI=["🐭쥐","🐮소","🐯호랑이","🐰토끼","🐲용","🐍뱀","🐴말","🐏양","🐵원숭이","🐓닭","🐶개","🐷돼지"];
-const LOADS=["주모가 향불을 피우고 있수다...","팔자를 들여다보는 중이수...","막걸리 한 잔 따르며 점을 치는 중...","천간 지지를 살펴보고 있수다...","주모가 눈을 감고 집중 중이수..."];
-const EMOJIS=["🌟","💪","🎯","💕","💰","🌿","🍶"];
-const SYS=`당신은 조선시대 주막에서 사주풀이를 봐주는 구수하고 친근한 주모입니다. 말투 규칙: 주막 주모 특유의 구수한 사투리. 필수 표현: "~수다","~이수","어이구","에그머니나","허허","아이구야","어이~". 손님 이름을 자주 부르기. 막걸리/주막/장터 비유 사용. 재미있고 유머있게.
-풀이 구조(7섹션, 각각 이모지+제목 한 줄로 시작):
-🌟 첫인상
-💪 타고난 기질과 성격
-🎯 올해의 운세
-💕 인연운과 사랑운
-💰 재물운과 직업운
-🌿 건강운
-🍶 주모의 한마디
-각 섹션 3~5줄. 마지막은 희망차고 따뜻하게.`;
-function mkP(n){const ci=((n%10)+10)%10,ji=((n%12)+12)%12;return{sky:CGH[ci],earth:JJH[ji],oc:OHC[ci],oj:OHJ[ji],label:CGK[ci]+"("+CGH[ci]+")/"+JJK[ji]+"("+JJH[ji]+")"}}
-function calcSaju(y,m,d,h){
-  const yp=mkP(y-4),mp=mkP((y-4)*12+(m-1));
-  const bd=Math.floor((y-1900)*365.25)+Math.floor((m-1)*30.44)+d+10;
-  const dp=mkP(bd);
-  const hm={"자시":0,"축시":1,"인시":2,"묘시":3,"진시":4,"사시":5,"오시":6,"미시":7,"신시":8,"유시":9,"술시":10,"해시":11};
-  const hk=Object.keys(hm).find(k=>h.startsWith(k));
-  return{yp,mp,dp,hp:hk!==undefined?mkP(bd*12+hm[hk]):null};
-}
-async function getSaju(){
-  const name=document.getElementById('nameInput').value.trim()||'손님';
+const ANI=["🐭쥐","🐮소","🐯호랑이","🐰토끼","🐲용","🐍뱀","async function getSaju(){
+  const nameRaw=document.getElementById('nameInput').value.trim();
+  const name=nameRaw.length?nameRaw:null;
+
   const y=parseInt(document.getElementById('yearInput').value);
   const m=parseInt(document.getElementById('monthInput').value);
   const d=parseInt(document.getElementById('dayInput').value);
-  const h=document.getElementById('hourInput').value;
-  if(!y||y<1900||y>2025){alert('태어난 연도를 올바르게 적어주슈!');return;}
-  if(!m){alert('태어난 달을 골라주슈!');return;}
-  if(!d){alert('태어난 날을 골라주슈!');return;}
+
+  if(!y||!m||!d){
+    alert('어이구 손님~ 생년월일은 제대로 적어주셔야지요!');
+    return;
+  }
+
+  const birthDate = String(y).padStart(4,'0')+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+
+  // 시간(시지) → 대표 시각(HH:mm)으로 변환
+  const hourSel=document.getElementById('hourInput').value;
+  let birthTime=null;
+  if(hourSel!=='모름'){
+    const shi = hourSel[0]; // '자','축'...
+    const map = {
+      '자':'00:30','축':'02:00','인':'04:00','묘':'06:00','진':'08:00','사':'10:00',
+      '오':'12:00','미':'14:00','신':'16:00','유':'18:00','술':'20:00','해':'22:00'
+    };
+    birthTime = map[shi] || null;
+  }
+
+  const sex = (gender==='남') ? 'M' : (gender==='여' ? 'F' : null);
+  const isLeapMonth = (calendar==='lunar') ? !!document.getElementById('leapInput').checked : null;
+
+  // UI 전환
   document.getElementById('formSection').style.display='none';
-  document.getElementById('result').classList.remove('show');
   const loadEl=document.getElementById('loading');
   loadEl.style.display='block';
+  const loadTxt=document.getElementById('loadTxt');
   let li=0;
-  const lt=setInterval(()=>{document.getElementById('loadTxt').textContent=LOADS[li++%LOADS.length];},1800);
-  const saju=calcSaju(y,m,d,h);
-  const animal=ANI[((y-4)%12+12)%12];
-  const desc=`이름:${name}/성별:${gender}/생년월일:${y}년${m}월${d}일/태어난시:${h}\n사주:\n연주:${saju.yp.label}[천간:${saju.yp.oc} 지지:${saju.yp.oj}]\n월주:${saju.mp.label}[천간:${saju.mp.oc} 지지:${saju.mp.oj}]\n일주:${saju.dp.label}[천간:${saju.dp.oc} 지지:${saju.dp.oj}]\n시주:${saju.hp?saju.hp.label:"미상"}\n띠:${animal}`;
+  const lt=setInterval(()=>{loadTxt.textContent=LOADS[li++%LOADS.length];},1800);
+
   try{
     const res=await fetch('/api/saju',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1400,system:SYS,messages:[{role:'user',content:'다음 사주로 풀이:\n'+desc}]})
+      body:JSON.stringify({
+        name,
+        calendar,
+        isLeapMonth,
+        birthDate,
+        birthTime,
+        sex,
+        timezone:'Asia/Seoul'
+      })
     });
     const data=await res.json();
-    if(!res.ok)throw new Error((data.error&&data.error.message)||'오류 '+res.status);
-    const text=data.content[0].text;
+
+    if(!res.ok || !data.ok){
+      const msg = (data && data.error && data.error.message) ? data.error.message : ('오류 '+res.status);
+      throw new Error(msg);
+    }
+
     clearInterval(lt);
     loadEl.style.display='none';
+
+    const p=data.data.pillars;
+    const meta=data.data.meta;
+
+    // 사주 표
     let html='<div class="saju-grid">';
-    ['연주','월주','일주','시주'].forEach((lbl,i)=>{
-      const p=[saju.yp,saju.mp,saju.dp,saju.hp][i];
-      html+=`<div class="sc"><div class="sc-lbl">${lbl}</div><div class="sc-sky">${p?p.sky:'?'}</div><div class="sc-earth">${p?p.earth:'?'}</div><div class="sc-oh">${p?p.oc+'/'+p.oj:'-'}</div></div>`;
+    const rows=[
+      {lbl:'연주', v:p.year},
+      {lbl:'월주', v:p.month},
+      {lbl:'일주', v:p.day},
+      {lbl:'시주', v:p.hour}
+    ];
+    rows.forEach(r=>{
+      html+=`<div class="sc">
+        <div class="sc-lbl">${r.lbl}</div>
+        <div class="sc-sky">${r.v? r.v.stem : '?'}</div>
+        <div class="sc-earth">${r.v? r.v.branch : '?'}</div>
+        <div class="sc-oh">${r.v? (r.v.stem+'/'+r.v.branch) : '-'}</div>
+      </div>`;
     });
-    html+=`</div><div class="birth-line">${animal} | ${y}년 ${m}월 ${d}일${h!=='모름'?' '+h:''}</div>`;
-    const lines=text.split('\n');
-    let sections=[],cur=null;
-    for(const line of lines){
-      const t=line.trim();if(!t)continue;
+    html+='</div>';
+
+    // 메타
+    const calTxt = (meta.calendarUsed==='lunar') ? `음력 ${meta.lunarDate}${meta.isLeapMonth?'(윤달)':''} → 양력 ${meta.solarDate}` : `양력 ${meta.solarDate}`;
+    html+=`<div class="mini-meta">🗓 ${calTxt}</div>`;
+
+    // 풀이 텍스트
+    const reading = (data.data.readingText||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    html+=`<div class="reading">${reading}</div>`;
+
+    document.getElementById('resultBody').innerHTML=html;
+    document.getElementById('result').style.display='block';
+    document.getElementById('resetBtn').style.display='block';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch(err){
+    clearInterval(lt);
+    loadEl.style.display='none';
+    document.getElementById('formSection').style.display='block';
+    alert('아이구~ 오류가 났수다!\n'+err.message);
+  }
+}
+t=line.trim();if(!t)continue;
       if(EMOJIS.some(e=>t.startsWith(e))){if(cur)sections.push(cur);cur={title:t,body:[]};}
       else if(cur)cur.body.push(t);
     }

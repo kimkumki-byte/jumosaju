@@ -1,0 +1,9 @@
+{
+  "name": "jomo-saju",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Jumo Saju - Netlify site with functions",
+  "dependencies": {
+    "lunar-javascript": "^1.7.7"
+  }
+}
