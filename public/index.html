@@ -104,8 +104,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div class="field">
       <label class="label">⚥ 성별</label>
       <div class="row">
-        <div class="gbtn on" onclick="setGender(this,'남')">🧔 도령</div>
-        <div class="gbtn" onclick="setGender(this,'여')">👩 아가씨</div>
+        <div class="gbtn on" id="btn-male" onclick="setGender('남')">🧔 도령</div>
+        <div class="gbtn" id="btn-female" onclick="setGender('여')">👩 아가씨</div>
       </div>
     </div>
 
@@ -193,14 +193,10 @@ function fillDays() {
   if (prev) sel.value = prev;
 }
 
-function setGender(el, g) {
+function setGender(g) {
   gender = g;
-  document.querySelectorAll('.gbtn').forEach(b => {
-    if (b === document.getElementById('btn-solar') || b === document.getElementById('btn-lunar') ||
-        b === document.getElementById('btn-yundal') || b === document.getElementById('btn-noyundal')) return;
-    b.classList.remove('on');
-  });
-  el.classList.add('on');
+  document.getElementById('btn-male').classList.toggle('on', g === '남');
+  document.getElementById('btn-female').classList.toggle('on', g === '여');
 }
 
 function setCalType(el, type) {
@@ -277,10 +273,10 @@ function renderResult(saju, reading, name, calType, isYundal) {
       html += `<div class="sc">
         <div class="sc-lbl">${pl.label}</div>
         <div class="sc-sky">${pl.cg || '?'}
-          <div style="font-size:10px;color:#8b6914;font-family:'Gowun Dodum',sans-serif">${pl.cg_kr||''}</div>
+          <div style="font-size:10px;color:#8b6914;font-family:sans-serif">${pl.cg_kr||''}</div>
         </div>
         <div class="sc-earth">${pl.jj || '?'}
-          <div style="font-size:10px;color:#c0392b;font-family:'Gowun Dodum',sans-serif">${pl.jj_kr||''}</div>
+          <div style="font-size:10px;color:#c0392b;font-family:sans-serif">${pl.jj_kr||''}</div>
         </div>
         <div class="sc-ss">${pl.sipseong_cg||''} / ${pl.sipseong_jj||''}</div>
         <div class="sc-ws">${pl.woonsung||''}</div>
@@ -307,7 +303,7 @@ function renderResult(saju, reading, name, calType, isYundal) {
   </div>`;
 
   // 오행 바 차트
-  html += '<div class="ohaeng-bar"><div style="font-size:12px;font-weight:700;color:var(--wood);margin-bottom:8px;font-family:'Gowun Dodum',sans-serif">⚖️ 오행 분포</div>';
+  html += '<div class="ohaeng-bar"><div style="font-size:12px;font-weight:700;color:var(--wood);margin-bottom:8px">⚖️ 오행 분포</div>';
   const ohTotal = Object.values(saju.ohaengCount).reduce((a,b)=>a+b,0);
   for (const [oh, val] of Object.entries(saju.ohaengCount)) {
     const pct = Math.round(val / ohTotal * 100);
@@ -324,7 +320,7 @@ function renderResult(saju, reading, name, calType, isYundal) {
   const relItems = [...rel.hap, ...rel.chung, ...rel.pa];
   if (relItems.length > 0) {
     html += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)">
-      <div style="font-size:12px;font-weight:700;color:var(--wood);margin-bottom:6px;font-family:'Gowun Dodum',sans-serif">🔗 합충파</div>
+      <div style="font-size:12px;font-weight:700;color:var(--wood);margin-bottom:6px;font-family:sans-serif">🔗 합충파</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px">
         ${relItems.map(r => `<span class="badge">${r}</span>`).join('')}
       </div>
