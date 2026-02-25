@@ -1,8 +1,0 @@
-{
-  "name": "jomo-saju",
-  "version": "0.0.3",
-  "private": true,
-  "dependencies": {
-    "lunar-javascript": "^1.7.0"
-  }
-}
