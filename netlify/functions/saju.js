@@ -1,64 +1,25 @@
 /**
- * Netlify Function: /api/saju
- * - Computes Four Pillars (Saju / BaZi) locally using open-source library.
- * - Returns a "주모" style reading without calling any LLM.
+ * Netlify Function: /.netlify/functions/saju  (proxied as /api/saju)
+ * Local Four Pillars (만세력) + 주모 스타일 해설 생성
  *
- * NOTE: Requires dependency: lunar-javascript
+ * - 외부 LLM/API 호출 없음
+ * - 오픈소스 lunar-javascript(6tail) 기반 계산
  */
 const { Solar, Lunar } = require('lunar-javascript');
 
-// Korean labels
-const STEM_HAN_TO_KR = {
-  '甲':'갑','乙':'을','丙':'병','丁':'정','戊':'무','己':'기','庚':'경','辛':'신','壬':'임','癸':'계'
-};
-const BRANCH_HAN_TO_KR = {
-  '子':'자','丑':'축','寅':'인','卯':'묘','辰':'진','巳':'사','午':'오','未':'미','申':'신','酉':'유','戌':'술','亥':'해'
-};
-const STEMS_KR = ['갑','을','병','정','무','기','경','신','임','계'];
-const BRANCHES_KR = ['자','축','인','묘','진','사','오','미','신','유','술','해'];
-const ELEMENT_BY_STEM_KR = { 갑:'목', 을:'목', 병:'화', 정:'화', 무:'토', 기:'토', 경:'금', 신:'금', 임:'수', 계:'수' };
-const ELEMENT_BY_BRANCH_KR = { 자:'수', 축:'토', 인:'목', 묘:'목', 진:'토', 사:'화', 오:'화', 미:'토', 신:'금', 유:'금', 술:'토', 해:'수' };
+// ---- Maps ----
+const STEM_HAN_TO_KR = {'甲':'갑','乙':'을','丙':'병','丁':'정','戊':'무','己':'기','庚':'경','辛':'신','壬':'임','癸':'계'};
+const BRANCH_HAN_TO_KR = {'子':'자','丑':'축','寅':'인','卯':'묘','辰':'진','巳':'사','午':'오','未':'미','申':'신','酉':'유','戌':'술','亥':'해'};
+const WUXING_CN_TO_KR = {'木':'목','火':'화','土':'토','金':'금','水':'수'};
 
-// Yin/Yang mapping (음/양)
-const STEM_YINYANG = { 갑:'양', 을:'음', 병:'양', 정:'음', 무:'양', 기:'음', 경:'양', 신:'음', 임:'양', 계:'음' };
-const BRANCH_YINYANG = { 자:'양', 축:'음', 인:'양', 묘:'음', 진:'양', 사:'음', 오:'양', 미:'음', 신:'양', 유:'음', 술:'양', 해:'음' };
-
-// 十神(ShiShen) mapping CN -> KR
+// 십성(중문) → 한글
 const SHISHEN_CN_TO_KR = {
-  '比肩': '비견',
-  '劫财': '겁재',
-  '食神': '식신',
-  '伤官': '상관',
-  '偏财': '편재',
-  '正财': '정재',
-  '七杀': '편관',
-  '正官': '정관',
-  '偏印': '편인',
-  '正印': '정인',
-  '日主': '일간'
+  '比肩':'비견','劫财':'겁재','食神':'식신','伤官':'상관',
+  '偏财':'편재','正财':'정재','七杀':'편관','正官':'정관',
+  '偏印':'편인','正印':'정인'
 };
 
-// 五行 mapping CN -> KR (some outputs are like '土火')
-const WUXING_CN_TO_KR = { '木':'목', '火':'화', '土':'토', '金':'금', '水':'수' };
-
-// Branch relations
-const BRANCH_CHONG = new Map([
-  ['자','오'], ['오','자'],
-  ['축','미'], ['미','축'],
-  ['인','신'], ['신','인'],
-  ['묘','유'], ['유','묘'],
-  ['진','술'], ['술','진'],
-  ['사','해'], ['해','사']
-]);
-const BRANCH_HAP = new Map([
-  ['자','축'], ['축','자'],
-  ['인','해'], ['해','인'],
-  ['묘','술'], ['술','묘'],
-  ['진','유'], ['유','진'],
-  ['사','신'], ['신','사'],
-  ['오','미'], ['미','오']
-]);
-
+// ---- helpers ----
 function json(statusCode, obj) {
   return {
     statusCode,
@@ -66,40 +27,41 @@ function json(statusCode, obj) {
     body: JSON.stringify(obj)
   };
 }
-
 function badRequest(code, message) {
   return json(400, { ok: false, error: { code, message } });
 }
 
 function parseYmd(str) {
+  // "YYYY-MM-DD"
   if (typeof str !== 'string') return null;
-  const m = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str.trim());
   if (!m) return null;
-  const y = Number(m[1]); const mo = Number(m[2]); const d = Number(m[3]);
-  if (!Number.isInteger(y) || !Number.isInteger(mo) || !Number.isInteger(d)) return null;
-  if (mo < 1 || mo > 12) return null;
-  if (d < 1 || d > 31) return null;
+  const y = parseInt(m[1], 10), mo = parseInt(m[2], 10), d = parseInt(m[3], 10);
+  if (!y || mo < 1 || mo > 12 || d < 1 || d > 31) return null;
   return { y, m: mo, d };
 }
 
 function parseHm(str) {
-  if (str == null) return null;
-  if (typeof str !== 'string') return null;
-  const m = str.match(/^(\d{2}):(\d{2})$/);
+  // "HH:MM"
+  if (!str) return null;
+  const m = /^(\d{2}):(\d{2})$/.exec(String(str).trim());
   if (!m) return null;
-  const hh = Number(m[1]); const mm = Number(m[2]);
+  const hh = parseInt(m[1], 10), mm = parseInt(m[2], 10);
   if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
   return { hh, mm };
 }
 
-function toPillarObj(gzHan) {
-  // gzHan like "甲子"
-  if (typeof gzHan !== 'string' || gzHan.length < 2) return null;
-  const stemHan = gzHan[0];
-  const branchHan = gzHan[1];
-  const stem = STEM_HAN_TO_KR[stemHan] || stemHan;
-  const branch = BRANCH_HAN_TO_KR[branchHan] || branchHan;
-  return { stem, branch };
+function toPillarObjFromHan(stemHan, branchHan, shishenGanCn, shishenZhiCn) {
+  const stemKr = STEM_HAN_TO_KR[stemHan] || stemHan;
+  const branchKr = BRANCH_HAN_TO_KR[branchHan] || branchHan;
+  return {
+    stemHan, branchHan,
+    stemKr, branchKr,
+    shishen: {
+      gan: shishenCnToKr(shishenGanCn),
+      zhi: shishenCnToKr(shishenZhiCn)
+    }
+  };
 }
 
 function wuxingHanToKr(str) {
@@ -107,105 +69,147 @@ function wuxingHanToKr(str) {
   // ex: '土火' -> '토화'
   return str.split('').map(ch => WUXING_CN_TO_KR[ch] || ch).join('');
 }
-
-function shishenCnToKr(v) {
-  if (v == null) return null;
-  if (Array.isArray(v)) return v.map(x => SHISHEN_CN_TO_KR[x] || x);
-  if (typeof v === 'string') return SHISHEN_CN_TO_KR[v] || v;
-  return v;
+function shishenCnToKr(str) {
+  if (!str) return null;
+  return SHISHEN_CN_TO_KR[str] || str;
 }
 
+function safeText(s) {
+  return String(s ?? '').replace(/[<>]/g, c => (c === '<' ? '&lt;' : '&gt;'));
+}
+
+// 합/충(최소) - 지지 기준
+const LIU_HE = new Set(['자축','인해','묘술','진유','사신','오미']);
+const LIU_CHONG = new Set(['자오','축미','인신','묘유','진술','사해']);
 function computeBranchRelations(pillars) {
-  const ps = [pillars.year, pillars.month, pillars.day, pillars.hour].filter(Boolean);
-  const branches = ps.map(p => p.branch);
+  const arr = [
+    ['year', pillars.year],
+    ['month', pillars.month],
+    ['day', pillars.day],
+    ['hour', pillars.hour]
+  ].filter(x => x[1] && x[1].branchHan);
+
   const hap = [];
   const chong = [];
-  for (let i = 0; i < branches.length; i++) {
-    for (let j = i + 1; j < branches.length; j++) {
-      const a = branches[i];
-      const b = branches[j];
-      if (BRANCH_HAP.get(a) === b) hap.push([a, b]);
-      if (BRANCH_CHONG.get(a) === b) chong.push([a, b]);
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      const a = arr[i][1].branchHan, b = arr[j][1].branchHan;
+      const key = a + b;
+      const key2 = b + a;
+      if (LIU_HE.has(key) || LIU_HE.has(key2)) hap.push([arr[i][0], arr[j][0], a, b]);
+      if (LIU_CHONG.has(key) || LIU_CHONG.has(key2)) chong.push([arr[i][0], arr[j][0], a, b]);
     }
   }
   return { hap, chong };
 }
 
-function normalizeInput(body) {
-  const name = (body.name ?? null);
-  const calendar = body.calendar;
-  const isLeapMonth = body.isLeapMonth ?? null;
-  const birthDate = body.birthDate;
-  const birthTime = body.birthTime ?? null;
-  const sex = body.sex ?? null;
-  const timezone = body.timezone || 'Asia/Seoul';
-
-  if (calendar !== 'solar' && calendar !== 'lunar') {
-    return { error: { code: 'INVALID_CALENDAR', message: 'calendar는 "solar" 또는 "lunar"여야 해요.' } };
+function countYinYang(pillars) {
+  // 간단: 천간/지지 인덱스 짝/홀로 음양 추정(전통표: 갑병무경임=양, 을정기신계=음 / 자인진오신술=양, 축묘사미유해=음)
+  const yangStems = new Set(['甲','丙','戊','庚','壬']);
+  const yangBranches = new Set(['子','寅','辰','午','申','戌']);
+  let yin = 0, yang = 0;
+  const ps = [pillars.year, pillars.month, pillars.day, pillars.hour].filter(Boolean);
+  for (const p of ps) {
+    if (yangStems.has(p.stemHan)) yang++; else yin++;
+    if (yangBranches.has(p.branchHan)) yang++; else yin++;
   }
-  const ymd = parseYmd(birthDate);
-  if (!ymd) {
-    return { error: { code: 'INVALID_BIRTHDATE', message: 'birthDate는 "YYYY-MM-DD" 형식으로 보내주세요.' } };
-  }
-  let hm = null;
-  if (birthTime !== null) {
-    hm = parseHm(birthTime);
-    if (!hm) {
-      return { error: { code: 'INVALID_BIRTHTIME', message: 'birthTime은 "HH:mm" 형식(예: "09:30") 또는 null 이어야 해요.' } };
-    }
-  }
-  if (sex !== null && sex !== 'M' && sex !== 'F') {
-    return { error: { code: 'INVALID_SEX', message: 'sex는 "M" 또는 "F" 또는 null 이어야 해요.' } };
-  }
-  if (calendar === 'lunar' && isLeapMonth !== null && typeof isLeapMonth !== 'boolean') {
-    return { error: { code: 'INVALID_LEAP', message: 'isLeapMonth는 boolean 또는 null 이어야 해요.' } };
-  }
-  return { name: typeof name === 'string' ? name.trim().slice(0, 20) : null, calendar, isLeapMonth: calendar === 'lunar' ? !!isLeapMonth : null, ymd, hm, sex, timezone };
+  return { yin, yang, total: yin + yang };
 }
 
-/**
- * Calculate pillars via lunar-javascript (6tail).
- * - If calendar is lunar: convert lunar->solar first (supports leap month by negative month).
- * - For missing time: compute year/month/day using a safe midday time and return hour as null.
- */
+function countElementsWithHidden(pillars, details) {
+  // 가중치: 겉오행(천간1 + 지지1), 장간(각 0.6씩)
+  const w = { 목:0, 화:0, 토:0, 금:0, 수:0 };
+  const all = [pillars.year, pillars.month, pillars.day, pillars.hour].filter(Boolean);
+
+  for (const p of all) {
+    const wx = details.wuxing?.[p._key];
+    if (wx && wx.length >= 2) {
+      const a = wx[0], b = wx[1];
+      if (w[a] != null) w[a] += 1;
+      if (w[b] != null) w[b] += 1;
+    }
+  }
+  // hidden (지장간) → 오행으로 변환
+  const hidden = details.hideGanHan || {};
+  for (const k of Object.keys(hidden)) {
+    const list = hidden[k] || [];
+    for (const stemHan of list) {
+      const elem = stemToElement(stemHan);
+      if (elem && w[elem] != null) w[elem] += 0.6;
+    }
+  }
+  return w;
+}
+
+function stemToElement(stemHan){
+  // 갑을=목, 병정=화, 무기=토, 경신=금, 임계=수
+  if (stemHan==='甲'||stemHan==='乙') return '목';
+  if (stemHan==='丙'||stemHan==='丁') return '화';
+  if (stemHan==='戊'||stemHan==='己') return '토';
+  if (stemHan==='庚'||stemHan==='辛') return '금';
+  if (stemHan==='壬'||stemHan==='癸') return '수';
+  return null;
+}
+
+function topTwoElements(counts){
+  const entries = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  return { top: entries[0], second: entries[1], bottom: entries[entries.length-1] };
+}
+
+function longBody(lines){
+  return lines.join('\n');
+}
+
+// ---- core calc ----
 function calcPillars({ calendar, isLeapMonth, ymd, hm }) {
   let solarYmd = null;
   let lunarYmd = null;
 
   if (calendar === 'solar') {
     solarYmd = { ...ymd };
-    // also compute lunar date for meta
     const solar = Solar.fromYmd(ymd.y, ymd.m, ymd.d);
     const lunar = solar.getLunar();
     lunarYmd = { y: lunar.getYear(), m: lunar.getMonth(), d: lunar.getDay(), isLeap: lunar.isLeap() };
   } else {
-    // lunar input
     lunarYmd = { y: ymd.y, m: ymd.m, d: ymd.d, isLeap: !!isLeapMonth };
-    // lunar-javascript: leap month can be represented with negative month in fromYmd/fromYmdHms
     const lunarMonth = isLeapMonth ? -Math.abs(ymd.m) : ymd.m;
     const lunar = Lunar.fromYmd(ymd.y, lunarMonth, ymd.d);
     const solar = lunar.getSolar();
     solarYmd = { y: solar.getYear(), m: solar.getMonth(), d: solar.getDay() };
   }
 
-  // pick time for calculation
   const hh = hm ? hm.hh : 12;
   const mm = hm ? hm.mm : 0;
 
   const solar = Solar.fromYmdHms(solarYmd.y, solarYmd.m, solarYmd.d, hh, mm, 0);
   const lunar = solar.getLunar();
-  const eightChar = lunar.getEightChar(); // uses jieqi for month pillar internally
+  const eightChar = lunar.getEightChar();
 
-  const yearGz = eightChar.getYear();   // e.g. "甲子"
+  const yearGz = eightChar.getYear();   // "甲子"
   const monthGz = eightChar.getMonth();
   const dayGz = eightChar.getDay();
   const timeGz = eightChar.getTime();
 
+  const yearStemHan = yearGz[0], yearBranchHan = yearGz[1];
+  const monthStemHan = monthGz[0], monthBranchHan = monthGz[1];
+  const dayStemHan = dayGz[0], dayBranchHan = dayGz[1];
+  const timeStemHan = timeGz[0], timeBranchHan = timeGz[1];
+
   const pillars = {
-    year: toPillarObj(yearGz),
-    month: toPillarObj(monthGz),
-    day: toPillarObj(dayGz),
-    hour: hm ? toPillarObj(timeGz) : null
+    year: toPillarObjFromHan(yearStemHan, yearBranchHan, eightChar.getYearShiShenGan(), eightChar.getYearShiShenZhi()?.[0]),
+    month: toPillarObjFromHan(monthStemHan, monthBranchHan, eightChar.getMonthShiShenGan(), eightChar.getMonthShiShenZhi()?.[0]),
+    day: toPillarObjFromHan(dayStemHan, dayBranchHan, eightChar.getDayShiShenGan(), eightChar.getDayShiShenZhi()?.[0]),
+    hour: hm ? toPillarObjFromHan(timeStemHan, timeBranchHan, eightChar.getTimeShiShenGan(), eightChar.getTimeShiShenZhi()?.[0]) : null
+  };
+  // for mapping in details
+  pillars.year._key='year'; pillars.month._key='month'; pillars.day._key='day'; if (pillars.hour) pillars.hour._key='hour';
+
+  // hideGan: 八字地支藏干
+  const hide = {
+    year: eightChar.getYearHideGan ? eightChar.getYearHideGan() : [],
+    month: eightChar.getMonthHideGan ? eightChar.getMonthHideGan() : [],
+    day: eightChar.getDayHideGan ? eightChar.getDayHideGan() : [],
+    hour: eightChar.getTimeHideGan ? eightChar.getTimeHideGan() : []
   };
 
   const details = {
@@ -222,239 +226,211 @@ function calcPillars({ calendar, isLeapMonth, ymd, hm }) {
       hour: hm ? eightChar.getTimeNaYin() : null
     },
     shishen: {
-      year: { gan: shishenCnToKr(eightChar.getYearShiShenGan()), zhi: shishenCnToKr(eightChar.getYearShiShenZhi()) },
-      month: { gan: shishenCnToKr(eightChar.getMonthShiShenGan()), zhi: shishenCnToKr(eightChar.getMonthShiShenZhi()) },
-      day: { gan: shishenCnToKr(eightChar.getDayShiShenGan()), zhi: shishenCnToKr(eightChar.getDayShiShenZhi()) },
-      hour: hm ? { gan: shishenCnToKr(eightChar.getTimeShiShenGan()), zhi: shishenCnToKr(eightChar.getTimeShiShenZhi()) } : null
+      gan: {
+        year: shishenCnToKr(eightChar.getYearShiShenGan()),
+        month: shishenCnToKr(eightChar.getMonthShiShenGan()),
+        day: shishenCnToKr(eightChar.getDayShiShenGan()),
+        hour: hm ? shishenCnToKr(eightChar.getTimeShiShenGan()) : null
+      },
+      zhiPrimary: {
+        year: shishenCnToKr(eightChar.getYearShiShenZhi()?.[0]),
+        month: shishenCnToKr(eightChar.getMonthShiShenZhi()?.[0]),
+        day: shishenCnToKr(eightChar.getDayShiShenZhi()?.[0]),
+        hour: hm ? shishenCnToKr(eightChar.getTimeShiShenZhi()?.[0]) : null
+      }
+    },
+    hideGanHan: {
+      year: hide.year || [],
+      month: hide.month || [],
+      day: hide.day || [],
+      hour: hm ? (hide.hour || []) : []
+    },
+    hideGanKr: {
+      year: (hide.year||[]).map(h=>STEM_HAN_TO_KR[h]||h),
+      month: (hide.month||[]).map(h=>STEM_HAN_TO_KR[h]||h),
+      day: (hide.day||[]).map(h=>STEM_HAN_TO_KR[h]||h),
+      hour: hm ? (hide.hour||[]).map(h=>STEM_HAN_TO_KR[h]||h) : []
+    },
+    dishi: {
+      year: eightChar.getYearDiShi ? eightChar.getYearDiShi() : null,
+      month: eightChar.getMonthDiShi ? eightChar.getMonthDiShi() : null,
+      day: eightChar.getDayDiShi ? eightChar.getDayDiShi() : null,
+      hour: hm && eightChar.getTimeDiShi ? eightChar.getTimeDiShi() : null
     },
     xunkong: {
-      year: eightChar.getYearXunKong(),
-      month: eightChar.getMonthXunKong(),
-      day: eightChar.getDayXunKong(),
-      hour: hm ? eightChar.getTimeXunKong() : null
-    },
-    hideGan: {
-      year: eightChar.getYearHideGan(),
-      month: eightChar.getMonthHideGan(),
-      day: eightChar.getDayHideGan(),
-      hour: hm ? eightChar.getTimeHideGan() : null
+      year: eightChar.getYearXunKong ? eightChar.getYearXunKong() : null,
+      month: eightChar.getMonthXunKong ? eightChar.getMonthXunKong() : null,
+      day: eightChar.getDayXunKong ? eightChar.getDayXunKong() : null,
+      hour: hm && eightChar.getTimeXunKong ? eightChar.getTimeXunKong() : null
     }
   };
 
-  return {
-    pillars,
-    details,
-    meta: {
-      calendarUsed: calendar,
-      solarDate: `${String(solarYmd.y).padStart(4,'0')}-${String(solarYmd.m).padStart(2,'0')}-${String(solarYmd.d).padStart(2,'0')}`,
-      lunarDate: lunarYmd ? `${String(lunarYmd.y).padStart(4,'0')}-${String(Math.abs(lunarYmd.m)).padStart(2,'0')}-${String(lunarYmd.d).padStart(2,'0')}` : null,
-      isLeapMonth: calendar === 'lunar' ? !!isLeapMonth : (lunarYmd ? !!lunarYmd.isLeap : null)
-    }
+  const meta = {
+    calendarUsed: calendar,
+    solarDate: `${String(solarYmd.y).padStart(4,'0')}-${String(solarYmd.m).padStart(2,'0')}-${String(solarYmd.d).padStart(2,'0')}`,
+    lunarDate: `${String(lunarYmd.y).padStart(4,'0')}-${String(Math.abs(lunarYmd.m)).padStart(2,'0')}-${String(lunarYmd.d).padStart(2,'0')}`,
+    isLeapMonth: !!lunarYmd.isLeap,
+    timeKnown: !!hm,
+    timeText: hm ? `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}` : '시간 모름'
   };
+
+  const relations = computeBranchRelations(pillars);
+
+  return { pillars, details, meta, relations };
 }
 
-function countElements(pillars) {
-  const counts = { 목:0, 화:0, 토:0, 금:0, 수:0 };
-  const add = (el, w=1)=>{ if (counts[el]!=null) counts[el]+=w; };
-
-  const all = [pillars.year, pillars.month, pillars.day, pillars.hour].filter(Boolean);
-  for (const p of all) {
-    add(ELEMENT_BY_STEM_KR[p.stem], 1.0);
-    add(ELEMENT_BY_BRANCH_KR[p.branch], 0.8);
-  }
-  return counts;
-}
-
-function countElementsWithHidden(pillars, details) {
-  const counts = { 목:0, 화:0, 토:0, 금:0, 수:0 };
-  const add = (el, w=1)=>{ if (counts[el]!=null) counts[el]+=w; };
-
-  const all = [pillars.year, pillars.month, pillars.day, pillars.hour].filter(Boolean);
-  for (const p of all) {
-    add(ELEMENT_BY_STEM_KR[p.stem], 1.0);
-    add(ELEMENT_BY_BRANCH_KR[p.branch], 0.9);
-  }
-
-  if (details && details.hideGan) {
-    const addHidden = (arr) => {
-      if (!Array.isArray(arr)) return;
-      for (const han of arr) {
-        const kr = STEM_HAN_TO_KR[han] || null;
-        if (!kr) continue;
-        add(ELEMENT_BY_STEM_KR[kr], 0.45);
-      }
-    };
-    addHidden(details.hideGan.year);
-    addHidden(details.hideGan.month);
-    addHidden(details.hideGan.day);
-    addHidden(details.hideGan.hour);
-  }
-
-  return counts;
-}
-
-function countYinYang(pillars) {
-  const counts = { 음:0, 양:0 };
-  const ps = [pillars.year, pillars.month, pillars.day, pillars.hour].filter(Boolean);
-  for (const p of ps) {
-    counts[STEM_YINYANG[p.stem] || '양'] += 1;
-    counts[BRANCH_YINYANG[p.branch] || '양'] += 1;
-  }
-  return counts;
-}
-
-function topTwoElements(counts) {
-  const arr = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  return { top: arr[0], second: arr[1], bottom: arr[arr.length-1] };
-}
-
-function makeJumoReading({ name, sex, pillars, meta, details }) {
-  const honor = sex === 'M' ? '도령' : sex === 'F' ? '아가씨' : '손님';
-  const who = (name && name.length) ? `${name} ${honor}` : honor;
-
-  const y = `${pillars.year.stem}${pillars.year.branch}`;
-  const m = `${pillars.month.stem}${pillars.month.branch}`;
-  const d = `${pillars.day.stem}${pillars.day.branch}`;
-  const h = pillars.hour ? `${pillars.hour.stem}${pillars.hour.branch}` : '시주 미상';
-
-  const dm = pillars.day.stem; // 일간
-  const dmEl = ELEMENT_BY_STEM_KR[dm] || '—';
-
+// ---- reading ----
+function makeReadingSections({ name, sex, pillars, meta, details, relations }) {
+  const who = name ? `${name} 손님` : (sex==='M' ? '도령' : (sex==='F' ? '아가씨' : '손님'));
+  const dm = pillars.day.stemHan; // 일간(한자)
+  const dmKr = STEM_HAN_TO_KR[dm] || dm;
   const counts = countElementsWithHidden(pillars, details);
-  const { top, second, bottom } = topTwoElements(counts);
-
   const yy = countYinYang(pillars);
-  const rel = computeBranchRelations(pillars);
+  const top = topTwoElements(counts);
+  const topElem = top.top[0], topVal = top.top[1];
+  const lowElem = top.bottom[0], lowVal = top.bottom[1];
+  const hapTxt = relations.hap.length ? relations.hap.map(x=>`${x[2]}${x[3]}`).join(', ') : '뚜렷한 합은 덜 보이고';
+  const chongTxt = relations.chong.length ? relations.chong.map(x=>`${x[2]}${x[3]}`).join(', ') : '큰 충은 덜 보이니';
 
-  const timeNote = pillars.hour
-    ? `태어난 시각도 적어줬으니, 시주까지 곁들여 더 또렷하게 봐드렸수다.`
-    : `근데 손님, 태어난 시각은 “모름”이라 했지요? 시주가 빠지면 끝맛이 살짝 달라질 수 있수다. 큰 줄기는 보되, 디테일은 범위로 봐드릴게요.`;
+  const intro = [
+    `어이~ ${who}, 주모가 잔 하나 따라놓고 팔자부터 펼쳐보겠수다.`,
+    `오늘 기운의 큰 줄기는 **${topElem}** 쪽이 가장 세고(${topVal.toFixed(1)}점쯤), 반대로 **${lowElem}** 쪽은 숨이 좀 짧수다(${lowVal.toFixed(1)}점쯤).`,
+    `일간은 **${pillars.day.stemHan}(${dmKr})** 요, 음양은 양 ${yy.yang} / 음 ${yy.yin} 비율로 흐름이 잡히네요.`,
+    `${hapTxt}… ${chongTxt}… 큰 파도는 “방향만 잡으면” 힘이 되겠수다.`
+  ];
 
-  const calendarNote = meta.calendarUsed === 'lunar'
-    ? `음력으로 적어줬다 했으니, 주모가 양력으로 바꿔서(윤달까지) 절기 기준으로 맞춰봤수다.`
-    : `양력으로 적어줬다 했으니, 절기 기준으로 월주까지 착착 맞춰 봤수다.`;
+  const frame = [
+    `겉으론 조용해도 속은 바닥이 깊은 사람으로 보이수.`,
+    `특히 ${topElem} 기운이 강하면 “몰입·집요함·버티기”가 장점이지만, 한쪽으로 쏠리면 마음이 답답해지기 쉽수다.`,
+    `반대로 ${lowElem} 기운이 약하면 “결정·표현·정리”가 늦어질 수 있으니, 생활에서 그 역할을 일부러 만들어줘야 해요.`,
+    `주모 말로 한마디면… **센 물줄기엔 둑이 필요**하다는 거지요.`
+  ];
 
-  const elLine = `오행으로 정리해보면, ${top[0]} 기운이 제일 앞장서고(힘이 센 편), 다음이 ${second[0]}이수다. 반대로 ${bottom[0]}은 상대적으로 약해서 “보충하면 운이 부드러워지는 포인트”로 보면 돼요.`;
+  const personality = [
+    `${who}은(는) ${pillars.day.stemHan}${pillars.day.branchHan} 일주 기운이 핵심인데요,`,
+    `겉태(표현)는 유연해 보여도 속태는 “내 기준”이 단단한 편이수다.`,
+    `십성 흐름을 보면, ${details.shishen?.gan?.month ? `월간은 ${details.shishen.gan.month}` : '월 기운'} 쪽이 색이 있고,`,
+    `그래서 남들 눈치만 보기보단 “내가 납득해야 움직이는 타입”으로 읽혀요.`,
+    `단, 고집이 서면 말이 짧아지니… 이때는 한 번 숨 고르고, ‘내가 지키려는 기준이 뭔지’부터 꺼내 말해보슈.`
+  ];
 
-  const dmLine = `일간(나의 중심)이 “${dm}(${dmEl})”이니, 기본 성향은 ${dmEl}의 결로 갑니더. 한 번 기준 잡으면 쉽게 안 꺾이고, 결과물로 보여주려는 기질이 있수다.`;
+  const work = [
+    `일/커리어는 “한 번 잡으면 깊게 파는 쪽”이 맞수다.`,
+    `오행으로 보면 ${topElem} 기운이 강하니, 전문성·분석·기획·설계 같은 ‘축적형’ 일에 힘이 붙어요.`,
+    `다만 ${lowElem} 기운이 약한 쪽이면, 결과물 내는 속도(마감, 발표, 영업)가 발목 잡을 수 있수다.`,
+    `그래서 방법은 단순해요: **작게라도 ‘주간 마감’**을 걸고, 남 앞에 내놓는 루틴을 만들면 운이 붙어요.`,
+    `주모는 “계획 7, 실행 3”이 아니라, “실행 1을 먼저” 권하겠수다.`
+  ];
 
-  const shishenMonth = details?.shishen?.month?.gan || null;
-  const shishenYear = details?.shishen?.year?.gan || null;
-  const shishenHint = (shishenMonth || shishenYear)
-    ? `십신으로 보면 월간 쪽에 “${shishenMonth || '—'}”, 연간 쪽에 “${shishenYear || '—'}” 기운이 보이는데, 이건 겉으로 드러나는 사회적 톤(일/사람/평판)에 영향을 줘요.`
-    : `십신 정보는 여기선 간단히만 곁들일게요. (기준은 일간 대비 관계요.)`;
+  const money = [
+    `재물은 물처럼 흐르기도, 또 물처럼 새기도 하수다.`,
+    `강한 기운은 벌어들이는 힘도 되지만, 동시에 “충동 지출/결정 지연” 둘 다 만들 수 있거든요.`,
+    `그래서 돈은 감으로 잡지 말고 **규칙으로 잡아야** 해요.`,
+    `① 고정저축/투자 비율을 먼저 박고 ② 남는 돈으로 쓰는 구조, 이게 ${who}에게 맞수다.`,
+    `큰 돈보다 “지속”이 승부수요.`
+  ];
 
-  const relLine = (() => {
-    const parts = [];
-    if (rel.hap.length) parts.push(`지지에 합(붙는 힘)이 ${rel.hap.map(p=>p.join('·')).join(', ')} 이렇게 보이고`);
-    if (rel.chong.length) parts.push(`충(부딪히는 힘)은 ${rel.chong.map(p=>p.join('·')).join(', ')} 이렇게 걸렸수다`);
-    if (!parts.length) return `지지 합·충은 크게 튀는 게 없어서, 큰 파도보단 잔잔히 흐르는 편이수다.`;
-    return `지지 흐름을 보면 ${parts.join(' / ')}. 합은 “도와주는 손”, 충은 “변화 버튼”이라 보면 편해요.`;
-  })();
+  const love = [
+    `인연은 첫 단추가 중요하수다. ${who}은(는) 마음이 움직이면 깊게 가는데,`,
+    `상대가 그 속도를 못 따라오면 “거리두기”가 생길 수 있어요.`,
+    `합(合)이 있으면 관계가 잘 붙고, 충(沖)이 강하면 말의 칼끝이 서는데…`,
+    `여긴 ${relations.chong.length ? '충이 보이니' : '충이 덜하니'} “말투 한 번만 부드럽게” 하면 인연운이 확 좋아져요.`,
+    `연애운은 운이 아니라 습관이더이다. 표현을 ‘짧고 자주’ 해보슈.`
+  ];
 
-  const yinYangLine = `음양으로는 양 ${yy.양} : 음 ${yy.음} 비율이구먼. 양이 많으면 추진/결단이 빠르고, 음이 많으면 관찰/정리가 강해져요. (둘 다 장점이니 균형만 잡으면 됨!)`;
+  const family = [
+    `가족/뿌리 쪽은 연주 기운이 힌트를 주는데요,`,
+    `연주의 십성이 ${details.shishen?.gan?.year || '연 기운'}로 읽히니, ‘기대/책임’의 결이 있수다.`,
+    `부담을 혼자 다 지는 버릇이 생기면, 속이 쉽게 지쳐요.`,
+    `가끔은 “내가 못 하는 걸 인정하는 용기”가 오히려 복이 됩니다.`,
+    `${who}, 주모는 손님이 오래 가는 걸 더 좋아하거든요.`
+  ];
 
-  const gentleWarning = (() => {
-    if (top[0] === '금') return `금 기운이 강하면 “정확함”이 장점인데, 말이 직구로 꽂힐 때가 있수다. 중요한 대화는 ‘사실 → 배려’ 순서로 말하면 갈등이 확 줄어들어요.`;
-    if (top[0] === '화') return `화가 앞서면 추진력은 끝내주는데, 마음이 급해질 때 실수도 같이 따라오지요. ‘속도 조절’만 되면 성과가 확 튑니더.`;
-    if (top[0] === '수') return `수가 많으면 생각이 깊고 감이 좋아요. 대신 걱정도 같이 커질 수 있수다. 머리로만 굴리지 말고 “작게라도 행동”이 운을 깨워요.`;
-    if (top[0] === '목') return `목이 강하면 성장/확장운이 좋아요. 대신 일을 벌리는 속도가 빨라져서 과부하가 올 수 있수다. 우선순위 1~2개만 꽉 잡아보슈.`;
-    return `토가 도드라지면 중심은 단단한데, 버티다 보면 고집으로 비칠 때도 있수다. ‘상대 방식’을 한 번 더 인정해주면 귀인이 붙어요.`;
-  })();
+  const health = [
+    `건강은 단정하면 안 되고 ‘경향’만 보겠수다.`,
+    `${topElem} 기운이 강하면 그 기운과 관련된 생활 습관이 체감에 크게 와요.`,
+    `예를 들어 수(물) 쪽이 강하면 수면·순환·스트레스가, 화(불) 쪽이 강하면 열감·과로가 핵심이 되기 쉽수다.`,
+    `그래서 처방은 딱 두 가지요: ① 수면 고정 ② 땀 나는 운동(가볍게라도).`,
+    `몸이 풀리면 운도 풀려요. 이건 주모가 진짜 여러 손님 봐서 아는 거요.`
+  ];
 
-  const career = (() => {
-    if (dmEl === '금') return `금 일간은 “기준/품질/결정”에 강해요. 기획·관리·품질·심사·컨설팅처럼 ‘정리해서 딱 맞추는 일’에 힘이 납니더. 단, 처음엔 차갑게 보일 수 있으니 말맛을 부드럽게 하면 평판이 더 잘 붙어요.`;
-    if (dmEl === '목') return `목 일간은 ‘키우는 힘’이 있어요. 브랜딩/영업/교육/콘텐츠처럼 성장과 확장을 만드는 일에 맞고, 사람과 네트워크를 타면 운이 더 살아납니다.`;
-    if (dmEl === '화') return `화 일간은 ‘보여주는 힘’이 있어요. 무대/세일즈/마케팅/리더 역할에서 존재감이 커지고, 속도가 붙으면 큰 판도 가능해요. 다만 번아웃 관리는 필수!`;
-    if (dmEl === '수') return `수 일간은 정보/감각/흐름을 읽는 데 강해요. 기획·분석·연구·상담·콘텐츠 등 “읽고 해석하는 일”에 재능이 있고, 깊이가 쌓일수록 돈이 따라오지요.`;
-    return `토 일간은 ‘받쳐주는 힘’이 있어요. 운영/재무/조직관리처럼 기반을 다지는 일에 강하고, 꾸준히 쌓아 올리면 큰 신뢰를 먹고 사는 팔자요.`;
-  })();
+  const move = [
+    `이동/환경운은 “기운을 보완해주는 공간”을 쓰면 확 올라가요.`,
+    `${lowElem} 기운이 약하면 그 성질을 가진 환경을 일부러 쓰는 게 좋수다.`,
+    `예: 목이 약하면 초록/자연/산책, 화가 약하면 햇빛/따뜻함/활동성, 금이 약하면 정리/규칙/도구, 토가 약하면 루틴/기초체력, 수가 약하면 휴식/물가/유연함.`,
+    `가장 쉬운 건 집/책상 배치부터요. 작은 변화가 큰 운을 부르더이다.`,
+    `주모는 “남쪽/밝은 곳”도 한 번 추천해보고 싶구먼요.`
+  ];
 
-  const love = `인연운은 한마디로 “급하게 잡으려 하면 도망가고, 내 리듬으로 살면 자연히 붙는 타입”에 가깝수다. ${top[0]} 기운이 강한 쪽은 사랑에서도 그 기운이 튀어요. 그래서 ${top[0]==='화'?'표현이 확 뜨겁게':top[0]==='수'?'마음이 깊게':top[0]==='금'?'기준이 또렷하게':top[0]==='목'?'관계가 확 커지게':'책임감이 묵직하게'} 움직일 수 있수다. ‘내 방식’만 고집하지 말고, 상대의 속도도 한 번 맞춰보슈.`;
-
-  const money = `재물운은 “한 방”보단 “쌓여서 커지는 운” 쪽이 더 안전하수다. 특히 ${bottom[0]} 기운이 약한 편이라 했지요? 이건 돈 자체가 없다는 뜻이 아니라, 돈이 굴러가는 방식이 ‘내 기본 성향’과 다를 수 있다는 뜻이수다. 그래서 자동저축/정기적 정산/지출 기준표처럼 ‘규칙’을 만들어두면 새는 돈이 확 줄고, 재물운이 매끈해져요.`;
-
-  const health = `건강은 사주로 “경향”만 보는 거요. ${top[0]}이 강하면 그 기운이 몰리는 쪽이 있으니, ${top[0]==='화'?'열·수면·심신 과열':top[0]==='수'?'부종·순환·컨디션 기복':top[0]==='금'?'피부·호흡·긴장':top[0]==='목'?'근육·눈 피로·스트레칭': '소화·체중·붓기'} 관리가 포인트가 될 수 있수다. 생활에서 할 수 있는 작은 루틴 하나만 잡아도 운이 부드럽게 풀려요.`;
-
-  const timeBlock = pillars.hour
-    ? `시주까지 있으니 디테일(말년운/자식운/하루 리듬)이 더 또렷해졌수다. 나중에 대운/세운까지 붙이면 더 길게 풀 수 있구먼.`
-    : `시각이 없으면 시주가 빠져서 “말년운/자식운/일상 리듬” 쪽은 범위로 봐야 해요. 나중에 태어난 시간 알게 되면 그때 한 번 더 좁혀드릴게요.`;
-
-  const closing = `마지막으로 한 잔만 더 따르자면… 사주는 ‘정답지’가 아니라 ‘지도’요. ${who}는 자기 발로 움직일 때 운이 살아나는 상이니, 오늘부터 딱 한 가지—작게라도 꾸준히 해보슈. 주모가 뒤에서 응원하겠수다 🍶`;
+  const summary = [
+    `마지막으로 한마디만 더 하겠수다, ${who}.`,
+    `사주는 “정해진 운명표”가 아니라, **힘이 어디로 쏠렸는지 보여주는 지도**요.`,
+    `강한 기운은 무기고, 약한 기운은 숙제인데… 숙제는 습관으로 풀면 됩니다.`,
+    `오늘부터 딱 하나만 하슈: “작게 시작해서, 밖으로 내놓기”.`,
+    `에그머니나, 이 주모가 응원 안 하면 누가 하겠수. 한 잔 더 하고 가슈 🍶`
+  ];
 
   return [
-    `어이구~ ${who}, 어서오슈. 주막 바람이 차니 막걸리 한 잔 데워드릴까유?`,
-    calendarNote,
-    `📜 팔자 뽑아보니 이렇게 나왔수다\n- 연주: ${y}\n- 월주: ${m}\n- 일주: ${d}\n- 시주: ${h}`,
-    '',
-    `🌟 1) 전체 톤(한 줄 요약)\n${dmLine}\n${elLine}\n${yinYangLine}`,
-    '',
-    `💪 2) 기질·성격(일간/십신 포인트)\n${shishenHint}\n${relLine}\n${gentleWarning}`,
-    '',
-    `🎯 3) 일/커리어 흐름\n${career}\n“잘 되는 방식”은 보통 ${top[0]} 쪽을 살리고, 부족한 ${bottom[0]}은 시스템으로 보완하는 거요. 혼자 끙끙보다 ‘정리/루틴/협업’ 붙이면 속도가 납니더.`,
-    '',
-    `💕 4) 인연·연애운\n${love}\n연애든 인간관계든, ${who}는 ‘말의 온도’만 한 단계 부드럽게 올리면 운이 확 좋아지는 타입이수다.`,
-    '',
-    `💰 5) 재물·직업운\n${money}\n돈은 운도 운인데, 습관이 반이요. 특히 지출 결정을 “기분” 말고 “규칙”으로 하면 재물복이 붙어요.`,
-    '',
-    `🌿 6) 건강·생활 루틴\n${health}\n몸은 운의 그릇이라, 컨디션만 잡혀도 일/사람/돈 흐름이 같이 살아나요.`,
-    '',
-    `🍶 7) 주모의 한마디\n${timeBlock}\n${timeNote}\n${closing}`
-  ].join('\n');
+    { icon: "✨", title: "한눈에 보는 기운, 크게 흐르는 물줄기", body: longBody(intro) },
+    { icon: "🧭", title: "전체 프레임, 쏠림이 강하면 방향이 복이다", body: longBody(frame) },
+    { icon: "🧠", title: "성격·기질, 유연함 속에 단단한 기준", body: longBody(personality) },
+    { icon: "🧱", title: "일·커리어, 깊게 파는 사람이 결국 이긴다", body: longBody(work) },
+    { icon: "💰", title: "재물운, 돈은 흐르고 모으는 건 둑이다", body: longBody(money) },
+    { icon: "💞", title: "인연운, 속도 조절만 되면 복이 붙는다", body: longBody(love) },
+    { icon: "🏠", title: "가족·뿌리, 기대를 짊어지는 손님의 기운", body: longBody(family) },
+    { icon: "🌿", title: "건강·생활, 몸이 풀리면 운도 풀린다", body: longBody(health) },
+    { icon: "🗺️", title: "이동·환경, 부족한 기운은 공간으로 채운다", body: longBody(move) },
+    { icon: "🍶", title: "주모의 한마디, 작은 실행이 큰 복을 부른다", body: longBody(summary) },
+  ];
 }
 
-exports.handler = async function(event) {
+exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
-    return json(405, { ok: false, error: { code: 'METHOD_NOT_ALLOWED', message: 'POST만 허용돼요.' } });
+    return json(405, { ok:false, error:{ code:'METHOD_NOT_ALLOWED', message:'POST로만 받수다.' }});
   }
 
-  let body;
+  let body = null;
+  try { body = JSON.parse(event.body || '{}'); } catch (_) { body = null; }
+  if (!body) return badRequest('BAD_JSON', '요청 형식이 이상하수다.');
+
+  const name = (typeof body.name === 'string' && body.name.trim().length) ? body.name.trim().slice(0, 30) : null;
+  const calendar = body.calendar === 'lunar' ? 'lunar' : 'solar';
+  const isLeapMonth = !!body.isLeapMonth;
+  const ymd = parseYmd(body.birthDate);
+  if (!ymd) return badRequest('BAD_BIRTHDATE', '생년월일(YYYY-MM-DD)을 확인해주슈.');
+  const hm = parseHm(body.birthTime);
+  const sex = (body.sex === 'M' || body.sex === 'F') ? body.sex : null;
+  const timezone = body.timezone || 'Asia/Seoul';
+
   try {
-    body = event.body ? JSON.parse(event.body) : {};
-  } catch (e) {
-    return badRequest('INVALID_JSON', '요청 본문(JSON)이 올바르지 않아요.');
-  }
+    const { pillars, details, meta, relations } = calcPillars({ calendar, isLeapMonth, ymd, hm });
 
-  const norm = normalizeInput(body);
-  if (norm.error) return badRequest(norm.error.code, norm.error.message);
+    const readingSections = makeReadingSections({ name, sex, pillars, meta, details, relations });
 
-  try {
-    const { pillars, meta, details } = calcPillars(norm);
-    if (!pillars.year || !pillars.month || !pillars.day) {
-      return json(500, { ok:false, error:{ code:'CALC_FAILED', message:'사주 계산에 실패했어요. 입력값을 다시 확인해보슈.' }});
-    }
-
-    const readingText = makeJumoReading({
-      name: norm.name,
-      sex: norm.sex,
-      pillars,
-      meta,
-      details
-    });
+    // also keep a plain readingText for backward compatibility
+    const readingText = readingSections.map(s => `${s.icon} ${s.title}\n${s.body}`).join('\n\n');
 
     return json(200, {
       ok: true,
-      version: 'calc_v1',
+      version: 'calc_v3',
       data: {
         pillars,
         details,
+        relations,
         meta: {
           calendarUsed: meta.calendarUsed,
           solarDate: meta.solarDate,
           lunarDate: meta.lunarDate,
           isLeapMonth: meta.isLeapMonth,
-          timezone: norm.timezone
+          timeText: meta.timeText,
+          timeKnown: meta.timeKnown,
+          timezone
         },
+        readingSections,
         readingText
       }
     });
   } catch (e) {
-    return json(500, {
-      ok: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: e && e.message ? e.message : '서버 오류가 났수다.'
-      }
-    });
+    return json(500, { ok:false, error:{ code:'INTERNAL_ERROR', message: e?.message || '서버 오류가 났수다.' }});
   }
 };
