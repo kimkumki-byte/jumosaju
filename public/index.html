@@ -70,7 +70,13 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .oh-fill{height:100%;border-radius:5px}
 .section{margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed rgba(107,58,31,.3)}
 .section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
-.sec-title{font-size:17px;font-weight:700;color:var(--red);margin-bottom:12px}
+.sec-title{font-size:17px;font-weight:700;color:var(--red);margin-bottom:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:14px 0;user-select:none}
+.sec-title-text{display:flex;align-items:center;gap:6px}
+.sec-arrow{font-size:12px;color:var(--smoke);transition:transform .3s;flex-shrink:0}
+.sec-body-wrap{overflow:hidden;transition:max-height .35s ease,opacity .3s ease;max-height:0;opacity:0}
+.sec-body-wrap.open{max-height:2000px;opacity:1}
+.section{border-bottom:1px dashed rgba(107,58,31,.25);margin-bottom:0;padding:0}
+.section:last-child{border-bottom:none}
 .sec-oneliner{font-family:"Noto Sans KR",sans-serif;font-size:16px;font-weight:800;color:#6b1a0a;background:rgba(192,57,43,.1);border-left:4px solid var(--red);padding:10px 14px;margin-bottom:14px;border-radius:0 6px 6px 0;line-height:1.6}
 .sec-body{font-family:"Noto Sans KR",sans-serif;font-size:15.5px;font-weight:400;color:#2c1500;line-height:2.2;letter-spacing:.2px}
 .footer{text-align:center;color:rgba(245,230,200,.3);font-family:"Gowun Dodum",sans-serif;font-size:11px;padding-bottom:20px}
@@ -282,12 +288,15 @@ function renderResult(saju, reading, name) {
   var html = "";
 
   // 사주 그리드 - 컬러 배경
-  var SC_BG = ["#5d4e75","#922b21","#1a5276","#1d6a3a"];
+  var SC_BG = ["#1d6a3a","#1a5276","#922b21","#5d4e75"]; // 시주/일주/월주/연주 순
+  // 시주/일주/월주/연주 순으로 표시
+  var pillarOrder = [3,2,1,0];
+  var pillarLbls = ["시주","일주","월주","연주"];
   html += "<div class=\"saju-grid\">";
-  var lbls = ["연주","월주","일주","시주"];
-  for (var i = 0; i < 4; i++) {
-    var pl = p[i];
-    var bg = SC_BG[i];
+  for (var oi = 0; oi < 4; oi++) {
+    var idx = pillarOrder[oi];
+    var pl = p[idx];
+    var bg = SC_BG[oi];
     if (pl) {
       html += "<div class=\"sc\" style=\"background:"+bg+"\">"
         +"<div class=\"sc-lbl\">"+pl.label+"</div>"
@@ -300,7 +309,7 @@ function renderResult(saju, reading, name) {
         +"</div>";
     } else {
       html += "<div class=\"sc\" style=\"background:"+bg+";opacity:.45\">"
-        +"<div class=\"sc-lbl\">"+lbls[i]+"</div>"
+        +"<div class=\"sc-lbl\">"+pillarLbls[oi]+"</div>"
         +"<div style=\"color:rgba(255,255,255,.7);font-size:12px;padding:24px 0\">시간<br>미상</div>"
         +"</div>";
     }
@@ -374,20 +383,29 @@ function renderResult(saju, reading, name) {
     return t.trim();
   }
   if (sections.length >= 2) {
-    sections.forEach(function(s) {
+    sections.forEach(function(s, secIdx) {
       var bodyLines = s.body.map(function(line){ return cleanBody(escHtml(line)); }).filter(function(l){return l.length>0;});
       var bodyHtml = "";
+      var summaryHtml = "";
       if(bodyLines.length > 0) {
-        // 첫 줄이 핵심 한줄 요약 (느낌표나 물음표로 끝나는 짧은 문장)
         var firstLine = bodyLines[0];
-        if(firstLine.length < 80 && (firstLine.endsWith("!") || firstLine.endsWith("?") || firstLine.endsWith("다") || firstLine.endsWith("요"))) {
-          bodyHtml = "<div class=\"sec-oneliner\">"+firstLine+"</div>";
-          bodyHtml += bodyLines.slice(1).join("<br>");
+        if(firstLine.length < 80 && (firstLine.endsWith("!") || firstLine.endsWith("?") || firstLine.endsWith("유") || firstLine.endsWith("겨"))) {
+          summaryHtml = "<div class=\"sec-oneliner\">"+firstLine+"</div>";
+          bodyHtml = bodyLines.slice(1).join("<br>");
         } else {
           bodyHtml = bodyLines.join("<br>");
         }
       }
-      html += "<div class=\"section\"><div class=\"sec-title\">"+cleanTitle(escHtml(s.title))+"</div><div class=\"sec-body\">"+bodyHtml+"</div></div>";
+      var isFirst = (secIdx === 0);
+      var openClass = isFirst ? " open" : "";
+      var arrowStyle = isFirst ? "transform:rotate(180deg)" : "";
+      html += "<div class=\"section\">"
+        +"<div class=\"sec-title\" onclick=\"toggleSection(this)\">"
+        +"<span class=\"sec-title-text\">"+cleanTitle(escHtml(s.title))+"</span>"
+        +"<span class=\"sec-arrow\" style=\""+arrowStyle+"\">▼</span>"
+        +"</div>"
+        +"<div class=\"sec-body-wrap"+openClass+"\">"+summaryHtml+"<div class=\"sec-body\">"+bodyHtml+"</div></div>"
+        +"</div>";
     });
   } else {
     var lines = reading.split("\n").map(function(l){ return cleanBody(escHtml(l)); });
@@ -404,6 +422,18 @@ function resetApp() {
   document.getElementById("speech").textContent = "어이~ 손님! 어서오슈~ 오늘 어디서 바람이 불어왔수? 어디 생년월일 한번 내보슈, 주모가 팔자 한번 봐드리리다!";
   window.scrollTo({top:0,behavior:"smooth"});
 }
+
+  function toggleSection(titleEl) {
+    var wrap = titleEl.nextElementSibling;
+    var arrow = titleEl.querySelector('.sec-arrow');
+    if (wrap.classList.contains('open')) {
+      wrap.classList.remove('open');
+      arrow.style.transform = '';
+    } else {
+      wrap.classList.add('open');
+      arrow.style.transform = 'rotate(180deg)';
+    }
+  }
 </script>
 </body>
 </html>
