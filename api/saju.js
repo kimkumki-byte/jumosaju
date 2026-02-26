@@ -262,7 +262,13 @@ function callAnthropic(apiKey,prompt){
       headers:{'Content-Type':'application/json; charset=utf-8','x-api-key':apiKey,'anthropic-version':'2023-06-01','Content-Length':Buffer.byteLength(body)}
     },res=>{
       let d='';res.on('data',c=>d+=c);
-      res.on('end',()=>{try{resolve(JSON.parse(d));}catch(e){reject(new Error('파싱오류:'+d.slice(0,200)));}});
+      res.on('end',()=>{
+      try{
+        const parsed=JSON.parse(d);
+        if(parsed.error){reject(new Error('Anthropic: '+(parsed.error.message||JSON.stringify(parsed.error))));}
+        else{resolve(parsed);}
+      }catch(e){reject(new Error('Anthropic응답오류: '+d.slice(0,300)));}
+    });
     });
     req.on('error',reject);req.write(body);req.end();
   });
@@ -272,10 +278,10 @@ module.exports=async function(req,res){
   res.setHeader('Access-Control-Allow-Origin','*');
   res.setHeader('Access-Control-Allow-Headers','Content-Type');
   res.setHeader('Content-Type','application/json; charset=utf-8');
-  if(req.method==='OPTIONS'){res.status(200).end();return;}
-  if(req.method!=='POST'){res.status(405).send('Method Not Allowed');return;}
+  if(req.method==='OPTIONS'){res.statusCode=200;res.end();return;}
+  if(req.method!=='POST'){res.statusCode=405;res.end('Method Not Allowed');return;}
   const apiKey=process.env.ANTHROPIC_API_KEY;
-  if(!apiKey){res.status(500).json({error:'API key not configured'});return;}
+  if(!apiKey){res.statusCode=500;res.end(JSON.stringify({error:'API key not configured'}));return;}
   try{
     const body=typeof req.body==='string'?JSON.parse(req.body):req.body;
     const sajuData=fullCalc(body);
@@ -283,8 +289,8 @@ module.exports=async function(req,res){
     const prompt=buildPrompt(sajuData,body.name||'손님',title);
     const llm=await callAnthropic(apiKey,prompt);
     if(llm.error)throw new Error(llm.error.message||'API오류');
-    res.status(200).json({saju:sajuData,reading:llm.content[0].text});
+    res.statusCode=200;res.end(JSON.stringify({saju:sajuData,reading:llm.content[0].text}));
   }catch(err){
-    res.status(500).json({error:err.message});
+    res.statusCode=500;res.end(JSON.stringify({error:err.message}));
   }
 };

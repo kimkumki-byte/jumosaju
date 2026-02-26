@@ -262,7 +262,13 @@ function callAnthropic(apiKey,prompt){
       headers:{'Content-Type':'application/json; charset=utf-8','x-api-key':apiKey,'anthropic-version':'2023-06-01','Content-Length':Buffer.byteLength(body)}
     },res=>{
       let d='';res.on('data',c=>d+=c);
-      res.on('end',()=>{try{resolve(JSON.parse(d));}catch(e){reject(new Error('파싱오류:'+d.slice(0,200)));}});
+      res.on('end',()=>{
+      try{
+        const parsed=JSON.parse(d);
+        if(parsed.error){reject(new Error('Anthropic: '+(parsed.error.message||JSON.stringify(parsed.error))));}
+        else{resolve(parsed);}
+      }catch(e){reject(new Error('Anthropic응답오류: '+d.slice(0,300)));}
+    });
     });
     req.on('error',reject);req.write(body);req.end();
   });
