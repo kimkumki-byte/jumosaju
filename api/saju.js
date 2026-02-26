@@ -195,59 +195,30 @@ function fullCalc(input){
 
 function buildPrompt(data,name,title){
   const p=data.pillars;
-  const pStr=p.map(pl=>`${pl.label}: ${pl.cg}${pl.jj}(${pl.cg_kr}${pl.jj_kr}) 십성:${pl.sipseong_cg}/${pl.sipseong_jj} 운성:${pl.woonsung}`).join('\n');
+  const pStr=p.filter(Boolean).map(pl=>`${pl.label}: ${pl.cg_kr}${pl.jj_kr}(${pl.sipseong_cg}/${pl.sipseong_jj})`).join(' | ');
   const oh=data.ohaengCount;
-  const oStr=Object.keys(oh).map(k=>k+':'+oh[k].toFixed(1)).join(' ');
+  const ohStr=Object.keys(oh).map(k=>k+':'+oh[k].toFixed(1)).join(' ');
   const rel=[...data.relations.hap,...data.relations.chung,...data.relations.pa].join(', ')||'없음';
   const sd=data.solarDate,od=data.originalDate;
   const dStr=od.isLunar?`음력${od.year}.${od.month}.${od.day}→양력${sd.year}.${sd.month}.${sd.day}`:`양력${sd.year}.${sd.month}.${sd.day}`;
-  return `당신은 조선시대 주막의 주모입니다. 아래 명리학 계산 결과를 근거로 사주 해설을 해주세요.
+  const overOh=Object.keys(oh).sort((a,b)=>oh[b]-oh[a])[0];
+  const lackOh=Object.keys(oh).sort((a,b)=>oh[a]-oh[b])[0];
+  const ilju=p[2]?p[2].cg_kr+p[2].jj_kr:'미상';
+  return `조선 주막 주모로서 사주 해설을 작성하라.
 
-[계산 데이터]
-이름: ${name} ${title||"님"} / 성별: ${data.gender} / ${dStr} / 태어난시: ${data.hourStr} / 띠: ${data.animal}
-[사주 원국]
+[사주 데이터]
+${name} ${title} / ${dStr} / ${data.animal} / ${data.hourStr}
 ${pStr}
-[오행 분포] ${oStr}
-[신강신약] ${data.shingang.result} ${data.shingang.ratio}%
-[용신] ${data.yongshin.primary} — ${data.yongshin.reason}
-[공망] ${data.gongmang.join(', ')}
-[합충파] ${rel}
+오행: ${ohStr} | ${data.shingang.result}(${data.shingang.ratio}%) | 용신:${data.yongshin.primary} | 공망:${data.gongmang.join(',')} | 합충파:${rel}
+과다:${overOh} 부족:${lackOh}
 
-[중요 규칙]
-0. 형식: 섹션 제목은 이모지+제목만. ## 마크다운 절대 금지. 오직 🌟💪🎯💕💰🌿🍶만 사용.
-1. 한자 완전 금지. 오직 한글 숫자 이모지만.
-2. 수치 숫자 언급 금지.
-3. 핵심 해석 고정:
-   - 신강신약: ${data.shingang.result} / 용신: ${data.yongshin.primary} 기운
-   - 과다 기운: ${(() => { const oh=data.ohaengCount; return Object.keys(oh).sort((a,b)=>oh[b]-oh[a])[0]; })()}
-   - 부족 기운: ${(() => { const oh=data.ohaengCount; return Object.keys(oh).sort((a,b)=>oh[a]-oh[b])[0]; })()}
-   - 공망: ${data.gongmang.map(g=>({子:'자',丑:'축',寅:'인',卯:'묘',辰:'진',巳:'사',午:'오',未:'미',申:'신',酉:'유',戌:'술',亥:'해'})[g]||g).join(', ')} 기운
-   - 합충파: ${[...data.relations.hap,...data.relations.chung,...data.relations.pa].length > 0 ? '있음' : '없음'}
+[말투] 충청도 사투리. ~유/~겠슈/~이랑께유/~구먼유로 문장 끝내기. 합니다/요/어요 금지. 이름은 "${name} ${title}"로만 호칭.
+[형식] ## 마크다운 금지. 한자 금지. 숫자 언급 금지.
 
-[말투 규칙 — 가장 중요]
-충청도 사투리를 쓰는 주모. 아래 규칙 절대 엄수:
-- 문장 끝: ~유, ~구먼유, ~겠슈, ~하겠슈, ~이랑께유, ~당께유, ~겠어유, ~더라구유 등 충청도 말투로만 끝내기
-- "합니다/입니다/요/어요/죠" 절대 사용 금지. 위반하면 안 됨.
-- 어이구, 에그머니나, 허참, 글쎄유 등 감탄사 자주 사용
-- 이름 호칭: 반드시 "${name} ${title||"님"}" 으로 부르기. 예: 남성이면 "김진수 도령", 여성이면 "김은혜 아씨". "님" 절대 사용 금지.
-- 막걸리 주막 장터 비유 자연스럽게
-
-[문체 규칙]
-설명조 금지. 팩트폭력+비유+충청도 말투 스타일:
-- "솔직히 말해서 ${name}님, 고집불통이란 소리 꽤 들어봤슈? 본인은 주관 뚜렷한 거라 하겠지만, 남들 눈엔 그냥 말 안 통하는 벽이랑께유."
-- "9시 출근 6시 퇴근 사무직? ${name}님한테는 감옥이나 다름없겠슈."
-- "나무 기운 없다는 건 주막에 안줏거리 없는 거랑 같아유, 술만 있으면 뭐하겠슈."
-
-[해설 구조]
-아래 7개 섹션 순서대로 작성. 각 섹션 형식:
-1) 이모지+제목
-2) 핵심 한줄 요약 — 임팩트 강하게, 느낌표나 물음표로 끝내기.
-   좋은 예: "겉은 양반, 속은 칼 품은 승부사!", "귀 닫고 사는 고집불통, 생각만 하다 날 새겠슈!", "돈은 잘 버는데 손에 쥐면 모래처럼 빠져나가!", "군중 속의 고독, 진정한 내 편을 찾아라!"
-   나쁜 예(금지): "물이 많은 사주이구먼유" 같은 밋밋한 문장
-3) 본문 5~6문장, 550자 내외. 팩트폭력+비유+충청도 말투.
+7섹션 순서대로. 각 섹션: 이모지+제목 → 핵심한줄(임팩트강하게, !로끝) → 본문4문장(팩트폭력+비유+충청도말투)
 
 🌟 총평
-💪 일주 분석 (${p[2]?p[2].cg_kr+p[2].jj_kr+' 일주':'일주'})
+💪 일주 분석 (${ilju} 일주)
 🎯 오행과 용신
 💕 인연운
 💰 재물·직업운
@@ -255,9 +226,10 @@ ${pStr}
 🍶 주모의 한마디`;
 }
 
+
 function callAnthropic(apiKey,prompt){
   return new Promise((resolve,reject)=>{
-    const body=JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:3000,messages:[{role:'user',content:prompt}]});
+    const body=JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1800,messages:[{role:'user',content:prompt}]});
     const req=https.request({hostname:'api.anthropic.com',path:'/v1/messages',method:'POST',
       headers:{'Content-Type':'application/json; charset=utf-8','x-api-key':apiKey,'anthropic-version':'2023-06-01','Content-Length':Buffer.byteLength(body)}
     },res=>{

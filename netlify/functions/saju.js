@@ -195,13 +195,16 @@ function fullCalc(input){
 
 function buildPrompt(data,name,title){
   const p=data.pillars;
-  const pStr=p.map(pl=>`${pl.label}: ${pl.cg}${pl.jj}(${pl.cg_kr}${pl.jj_kr}) 십성:${pl.sipseong_cg}/${pl.sipseong_jj} 운성:${pl.woonsung}`).join('\n');
+  const pStr=p.filter(Boolean).map(pl=>`${pl.label}: ${pl.cg_kr}${pl.jj_kr}(${pl.sipseong_cg}/${pl.sipseong_jj})`).join(' | ');
   const oh=data.ohaengCount;
-  const oStr=Object.keys(oh).map(k=>k+':'+oh[k].toFixed(1)).join(' ');
+  const ohStr=Object.keys(oh).map(k=>k+':'+oh[k].toFixed(1)).join(' ');
   const rel=[...data.relations.hap,...data.relations.chung,...data.relations.pa].join(', ')||'없음';
   const sd=data.solarDate,od=data.originalDate;
   const dStr=od.isLunar?`음력${od.year}.${od.month}.${od.day}→양력${sd.year}.${sd.month}.${sd.day}`:`양력${sd.year}.${sd.month}.${sd.day}`;
-  return `당신은 조선시대 주막의 주모입니다. 아래 명리학 계산 결과를 근거로 사주 해설을 해주세요.
+  const overOh=Object.keys(oh).sort((a,b)=>oh[b]-oh[a])[0];
+  const lackOh=Object.keys(oh).sort((a,b)=>oh[a]-oh[b])[0];
+  const ilju=p[2]?p[2].cg_kr+p[2].jj_kr:'미상';
+  return `조선 주막 주모로서 사주 해설을 작성하라.
 
 [계산 데이터]
 이름: ${name} ${title||"님"} / 성별: ${data.gender} / ${dStr} / 태어난시: ${data.hourStr} / 띠: ${data.animal}
@@ -257,7 +260,7 @@ ${pStr}
 
 function callAnthropic(apiKey,prompt){
   return new Promise((resolve,reject)=>{
-    const body=JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:3000,messages:[{role:'user',content:prompt}]});
+    const body=JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1800,messages:[{role:'user',content:prompt}]});
     const req=https.request({hostname:'api.anthropic.com',path:'/v1/messages',method:'POST',
       headers:{'Content-Type':'application/json; charset=utf-8','x-api-key':apiKey,'anthropic-version':'2023-06-01','Content-Length':Buffer.byteLength(body)}
     },res=>{
