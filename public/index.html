@@ -333,12 +333,21 @@ function renderResult(saju, reading, name) {
   });
   if (cur) sections.push(cur);
 
+  function escHtml(t) {
+    return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+  function cleanTitle(t) {
+    // ** 마크다운 제거
+    return t.replace(/\*\*/g,"");
+  }
   if (sections.length >= 2) {
     sections.forEach(function(s) {
-      html += "<div class=\"section\"><div class=\"sec-title\">"+s.title+"</div><div class=\"sec-body\">"+s.body.join("<br>")+"</div></div>";
+      var bodyHtml = s.body.map(function(line){ return escHtml(line).replace(/\*\*/g,""); }).join("<br>");
+      html += "<div class=\"section\"><div class=\"sec-title\">"+cleanTitle(escHtml(s.title))+"</div><div class=\"sec-body\">"+bodyHtml+"</div></div>";
     });
   } else {
-    html += "<div class=\"section\"><div class=\"sec-body\">"+reading.replace(/\n/g,"<br>")+"</div></div>";
+    var lines = reading.split("\n").map(function(l){ return escHtml(l).replace(/\*\*/g,""); });
+    html += "<div class=\"section\"><div class=\"sec-body\">"+lines.join("<br>")+"</div></div>";
   }
 
   document.getElementById("resultBody").innerHTML = html;

@@ -164,27 +164,42 @@ function buildPrompt(data,name){
   const rel=[...data.relations.hap,...data.relations.chung,...data.relations.pa].join(', ')||'없음';
   const sd=data.solarDate,od=data.originalDate;
   const dStr=od.isLunar?`음력${od.year}.${od.month}.${od.day}→양력${sd.year}.${sd.month}.${sd.day}`:`양력${sd.year}.${sd.month}.${sd.day}`;
-  return `조선 주막 주모 말투로 사주 해설. ~수다,~이수,어이구 등 사투리 필수. 반드시 계산데이터만 근거.
+  return `당신은 조선시대 주막의 주모입니다. 아래 명리학 계산 결과를 근거로 사주 해설을 해주세요.
 
-[데이터] 이름:${name} 성별:${data.gender} 날짜:${dStr} 시:${data.hourStr} 띠:${data.animal}
-[원국]\n${pStr}
-[오행] ${oStr} [${data.shingang.result} ${data.shingang.ratio}%] [용신:${data.yongshin.primary}] [공망:${data.gongmang.join(',')}] [합충파:${rel}]
+[계산 데이터]
+이름: ${name} / 성별: ${data.gender} / ${dStr} / 태어난시: ${data.hourStr} / 띠: ${data.animal}
+[사주 원국]
+${pStr}
+[오행] ${oStr}
+[신강신약] ${data.shingang.result} ${data.shingang.ratio}%
+[용신] ${data.yongshin.primary} — ${data.yongshin.reason}
+[공망] ${data.gongmang.join(', ')}
+[합충파] ${rel}
 
-7섹션 순서대로, 각 이모지+제목 한줄, 본문 3~4줄:
+[말투 규칙]
+- 반드시 ~수다, ~이수, 어이구, 에그머니나, ~란 말이수 등 주모 사투리 사용
+- ${name}님 이름 자주 부르기
+- 막걸리, 주막, 장터 등 비유 자연스럽게 포함
+- 반드시 계산 데이터 수치 근거 명시 (예: "신강이 71%나 되니~", "壬子 일주는~", "오행에 토가 많아서~")
+- 감성적 추정 금지, 데이터 기반만
+
+[해설 구조]
+아래 7개 섹션을 순서대로 작성. 각 섹션은 반드시 이모지+제목으로 시작하고, 본문은 최소 6~8문장, 각 섹션 700자 이상 충분히 작성:
+
 🌟 총평
-💪 일주분석(${p[2]?p[2].cg+p[2].jj:'일주'})
-🎯 오행과용신
+💪 일주 분석 (${p[2]?p[2].cg+p[2].jj:'일주'} 일주)
+🎯 오행과 용신
 💕 인연운
-💰 재물직업운
-🌿 건강주의
-🍶 주모한마디`;
+💰 재물·직업운
+🌿 건강·주의사항
+🍶 주모의 한마디`;
 }
 
 function callAnthropic(apiKey,prompt){
   return new Promise((resolve,reject)=>{
-    const body=JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1200,messages:[{role:'user',content:prompt}]});
+    const body=JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:3000,messages:[{role:'user',content:prompt}]});
     const req=https.request({hostname:'api.anthropic.com',path:'/v1/messages',method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','Content-Length':Buffer.byteLength(body)}
+      headers:{'Content-Type':'application/json; charset=utf-8','x-api-key':apiKey,'anthropic-version':'2023-06-01','Content-Length':Buffer.byteLength(body)}
     },res=>{
       let d='';res.on('data',c=>d+=c);
       res.on('end',()=>{try{resolve(JSON.parse(d));}catch(e){reject(new Error('파싱오류:'+d.slice(0,200)));}});
@@ -194,7 +209,7 @@ function callAnthropic(apiKey,prompt){
 }
 
 exports.handler=async function(event){
-  const H={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json'};
+  const H={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8'};
   if(event.httpMethod==='OPTIONS')return{statusCode:200,headers:H};
   if(event.httpMethod!=='POST')return{statusCode:405,body:'Method Not Allowed'};
   const apiKey=process.env.ANTHROPIC_API_KEY;
