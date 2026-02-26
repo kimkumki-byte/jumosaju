@@ -366,6 +366,10 @@ function renderResult(saju, reading, name) {
       t=t.split(e).join(k);
     });
     t = t.replace(/[^\uAC00-\uD7A3a-zA-Z0-9 .,!?~·…\-()%\n\r§]/g,"");
+    // 빈 괄호 제거 (한자 제거 후 남는 빈괄호)
+    t = t.replace(/\(\s*\)/g,"");
+    // 연속 공백 정리
+    t = t.replace(/ {2,}/g," ");
     Object.keys(ph).forEach(function(k){ t=t.split(k).join(ph[k]); });
     return t.trim();
   }
