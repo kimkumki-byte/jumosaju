@@ -53,10 +53,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .res-hd{background:var(--red);padding:16px 20px;text-align:center;color:var(--paper);font-size:16px;font-weight:700;letter-spacing:2px;margin:-24px -20px 20px}
 .saju-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px}
 .sc{background:rgba(255,255,255,.5);border:1.5px solid var(--smoke);border-radius:4px;padding:8px 4px;text-align:center}
-.sc-lbl{font-size:10px;color:var(--smoke);font-family:"Gowun Dodum",sans-serif;margin-bottom:4px}
+.sc-lbl{font-size:12px;color:var(--smoke);font-family:"Gowun Dodum",sans-serif;margin-bottom:4px}
 .sc-sky{font-size:26px;font-weight:700;color:var(--ink);line-height:1}
 .sc-earth{font-size:26px;font-weight:700;color:var(--red);line-height:1;margin-top:4px}
-.sc-sub{font-size:9px;color:var(--smoke);font-family:"Gowun Dodum",sans-serif;margin-top:2px}
+.sc-sub{font-size:11px;color:var(--smoke);font-family:"Gowun Dodum",sans-serif;margin-top:2px}
 .info-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)}
 .badge{background:rgba(255,255,255,.5);border:1px solid var(--smoke);border-radius:12px;padding:4px 10px;font-family:"Gowun Dodum",sans-serif;font-size:12px;color:var(--wood)}
 .badge.strong{background:rgba(192,57,43,.15);border-color:var(--red);color:var(--red);font-weight:700}
@@ -68,7 +68,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .section{margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed rgba(107,58,31,.3)}
 .section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .sec-title{font-size:17px;font-weight:700;color:var(--red);margin-bottom:12px}
-.sec-body{font-family:"Gowun Dodum",sans-serif;font-size:15px;color:#3a1a00;line-height:2}
+.sec-body{font-family:"Gowun Dodum",sans-serif;font-size:16px;color:#3a1a00;line-height:2.1}
 .footer{text-align:center;color:rgba(245,230,200,.3);font-family:"Gowun Dodum",sans-serif;font-size:11px;padding-bottom:20px}
 .yundal-row{display:none;margin-top:8px}
 .yundal-row.show{display:flex}
@@ -337,16 +337,20 @@ function renderResult(saju, reading, name) {
     return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
   function cleanTitle(t) {
-    // ## ** 마크다운 제거, 도형 이모지 제거
-    return t.replace(/#{1,6}\s*/g,"").replace(/\*\*/g,"").replace(/[\u25A0-\u25FF\u2600-\u26FF\u2700-\u27BF]/g,"").trim();
+    // 섹션 제목: 허용 이모지 + 한글만
+    return t.replace(/#{1,6}\s*/g,"").replace(/\*+/g,"").trim();
   }
   function cleanBody(t) {
-    // ## ** 마크다운 제거, 도형 이모지 제거, 한자(CJK) 제거
-    return t.replace(/#{1,6}\s*/g,"")
-            .replace(/\*\*/g,"").replace(/\*/g,"")
-            .replace(/[\u25A0-\u25FF\u2666\u2665\u2663\u2660]/g,"")
-            .replace(/[\u4E00-\u9FFF\u3400-\u4DBF]/g,"")
-            .trim();
+    t = t.replace(/#{1,6}\s*/g,"").replace(/\*+/g,"");
+    var allowedEmojis = ["🌟","💪","🎯","💕","💰","🌿","🍶"];
+    var ph = {};
+    allowedEmojis.forEach(function(e,i){
+      var k="§§§"+i+"§§§"; ph[k]=e;
+      t=t.split(e).join(k);
+    });
+    t = t.replace(/[^\uAC00-\uD7A3a-zA-Z0-9 .,!?~·…\-()%\n\r§]/g,"");
+    Object.keys(ph).forEach(function(k){ t=t.split(k).join(ph[k]); });
+    return t.trim();
   }
   if (sections.length >= 2) {
     sections.forEach(function(s) {
