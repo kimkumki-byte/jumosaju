@@ -242,6 +242,31 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </div>
 
 <script>
+function escHtml(t) {
+  return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function cleanTitle(t) {
+  return t.replace(/[^가-힣a-zA-Z0-9 🌟💪🎯💕💰🌿🍶·()]/g,"").trim();
+}
+function cleanBody(t) {
+  t = t.replace(/#+\s*/g,"").replace(/\*+/g,"");
+  var emojis = ["\uD83C\uDF1F","\uD83D\uDCAA","\uD83C\uDFAF","\uD83D\uDC95","\uD83D\uDCB0","\uD83C\uDF3F","\uD83C\uDF76"];
+  var ph = {};
+  emojis.forEach(function(e,i){ var k="__E"+i+"__"; ph[k]=e; t=t.split(e).join(k); });
+  t = t.split("").filter(function(c){
+    var code = c.charCodeAt(0);
+    return (code >= 0xAC00 && code <= 0xD7A3) || // 한글
+           (code >= 65 && code <= 90) || (code >= 97 && code <= 122) || // 영문
+           (code >= 48 && code <= 57) || // 숫자
+           " .,!?~-()%\n\r_".indexOf(c) >= 0 ||
+           c === "\u00B7" || c === "\u2026" || c === "\u2019";
+  }).join("");
+  t = t.replace(/\(\s*\)/g,"");
+  t = t.replace(/  +/g," ");
+  Object.keys(ph).forEach(function(k){ t=t.split(k).join(ph[k]); });
+  return t.trim();
+}
+
 var gender = "남";
 var calType = "solar";
 var isYundal = false;
@@ -346,6 +371,8 @@ function buildPrompt(saju, name) {
 
   return "당신은 조선시대 주막의 주모입니다. 아래 명리학 계산 결과만을 근거로 사주 해설을 해주세요.\n\n[계산 데이터]\n이름: "+name+" / 성별: "+saju.gender+" / "+dateStr+" / 태어난시: "+saju.hourStr+" / 띠: "+saju.animal+"\n\n[사주 원국]\n"+pillarStr+"\n\n[오행] "+oStr+"\n[신강신약] "+saju.shingang.result+" ("+saju.shingang.ratio+"%)\n[용신] "+saju.yongshin.primary+" — "+saju.yongshin.reason+"\n[공망] "+saju.gongmang.join(", ")+"\n[합충파] "+relStr+"\n\n[말투 규칙]\n- 조선 주막 주모의 구수한 사투리 (예: ~수다, ~이수, 어이구, 에그머니나)\n- "+name+"님 이름 자주 부르기\n- 막걸리·주막·장터 비유 자연스럽게\n- 반드시 위 계산 데이터 근거로만 해설\n- 근거 명시: 오행·신강약·일주명 등 언급\n\n[해설 구조 — 순서대로 7섹션, 이모지+제목으로 시작, 각 4~6줄]\n🌟 총평\n💪 일주 분석 ("+ilju+")\n🎯 오행과 용신\n💕 인연운\n💰 재물·직업운\n🌿 건강·주의사항\n🍶 주모의 한마디";
 }
+
+
 
 function renderResult(saju, reading, name) {
   var p = saju.pillars;
