@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>주모여기사주요 🍶</title>
-<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#1a0a00;--paper:#f5e6c8;--red:#c0392b;--smoke:#8b6914;--wood:#6b3a1f}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#1a0a00;background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,.02) 40px,rgba(255,255,255,.02) 41px);min-height:100vh;font-family:"Nanum Myeongjo",serif;color:var(--ink)}
+body{background:#1a0a00;background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,.02) 40px,rgba(255,255,255,.02) 41px);min-height:100vh;font-family:"Noto Sans KR",sans-serif;color:var(--ink)}
 .lanterns{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-around;padding:0 20px;z-index:10;pointer-events:none}
 .lantern{width:28px;display:flex;flex-direction:column;align-items:center;animation:swing 3s ease-in-out infinite}
 .lantern:nth-child(2){animation-delay:-1s}.lantern:nth-child(3){animation-delay:-2s}.lantern:nth-child(4){animation-delay:-.5s}.lantern:nth-child(5){animation-delay:-1.5s}
@@ -39,7 +39,7 @@ input:focus,select:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,5
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b3a1f' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-color:rgba(255,255,255,.65);padding-right:28px}
 .gbtn{flex:1;padding:10px;background:rgba(255,255,255,.5);border:1.5px solid var(--smoke);border-radius:4px;font-family:"Gowun Dodum",sans-serif;font-size:14px;color:var(--smoke);cursor:pointer;text-align:center;transition:all .2s;user-select:none}
 .gbtn.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:700}
-.btn-main{width:100%;padding:18px;background:linear-gradient(180deg,#c0392b,#962d22);border:none;border-radius:4px;color:#f5e6c8;font-family:"Nanum Myeongjo",serif;font-size:20px;font-weight:800;letter-spacing:3px;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.btn-main{width:100%;padding:18px;background:linear-gradient(180deg,#c0392b,#962d22);border:none;border-radius:4px;color:#f5e6c8;font-family:"Noto Sans KR",sans-serif;font-size:20px;font-weight:800;letter-spacing:3px;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(0,0,0,.4)}
 .btn-main:hover{background:linear-gradient(180deg,#d44235,#a83228);transform:translateY(-1px)}
 .btn-reset{width:100%;padding:12px;background:transparent;border:2px solid var(--paper);border-radius:4px;color:var(--paper);font-family:"Gowun Dodum",sans-serif;font-size:14px;cursor:pointer;margin-bottom:20px}
 .btn-reset:hover{background:rgba(245,230,200,.1)}
@@ -52,14 +52,14 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .res-hd{background:var(--red);padding:16px 20px;text-align:center;color:var(--paper);font-size:16px;font-weight:700;letter-spacing:2px;margin:-24px -20px 20px}
 .saju-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
-.sc{border-radius:6px;overflow:hidden;text-align:center;box-shadow:2px 3px 10px rgba(0,0,0,.35)}
-.sc-lbl{font-size:12px;color:#fff;font-family:"Gowun Dodum",sans-serif;padding:6px 4px 4px;background:rgba(0,0,0,.35);letter-spacing:2px;font-weight:700}
-.sc-sky{font-size:34px;font-weight:800;color:#fff;line-height:1;padding:12px 4px 2px;text-shadow:2px 2px 4px rgba(0,0,0,.4)}
-.sc-sky-kr{font-size:12px;color:rgba(255,255,255,.95);padding-bottom:2px;font-weight:700}
-.sc-divider{height:1px;background:rgba(255,255,255,.4);margin:0 8px}
-.sc-earth{font-size:34px;font-weight:800;line-height:1;padding:8px 4px 2px;text-shadow:2px 2px 4px rgba(0,0,0,.4)}
-.sc-earth-kr{font-size:12px;padding-bottom:4px;color:rgba(255,255,255,.95);font-weight:700}
-.sc-sub{font-size:11px;color:rgba(255,255,255,.95);font-family:"Gowun Dodum",sans-serif;padding:4px 4px 8px;background:rgba(0,0,0,.25);font-weight:600}
+.sc{border-radius:8px;overflow:hidden;text-align:center;box-shadow:3px 4px 14px rgba(0,0,0,.5)}
+.sc-lbl{font-size:11px;color:rgba(255,255,255,.9);font-family:"Gowun Dodum",sans-serif;padding:7px 4px 5px;background:rgba(0,0,0,.3);letter-spacing:2px;font-weight:700}
+.sc-sky{font-size:36px;font-weight:900;color:#fff;line-height:1;padding:14px 4px 0;text-shadow:2px 2px 6px rgba(0,0,0,.5)}
+.sc-sky-kr{font-size:13px;color:#fff;padding-bottom:4px;font-weight:700;font-family:"Gowun Dodum",sans-serif}
+.sc-divider{height:1px;background:rgba(255,255,255,.35);margin:4px 12px}
+.sc-earth{font-size:36px;font-weight:900;color:#fff;line-height:1;padding:8px 4px 0;text-shadow:2px 2px 6px rgba(0,0,0,.5)}
+.sc-earth-kr{font-size:13px;color:#fff;padding-bottom:4px;font-weight:700;font-family:"Gowun Dodum",sans-serif}
+.sc-sub{font-size:11px;color:rgba(255,255,255,.95);font-family:"Gowun Dodum",sans-serif;padding:5px 4px 9px;background:rgba(0,0,0,.28);font-weight:600;line-height:1.6}
 .info-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)}
 .badge{background:rgba(255,255,255,.5);border:1px solid var(--smoke);border-radius:12px;padding:4px 10px;font-family:"Gowun Dodum",sans-serif;font-size:12px;color:var(--wood)}
 .badge.strong{background:rgba(192,57,43,.15);border-color:var(--red);color:var(--red);font-weight:700}
@@ -71,8 +71,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .section{margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed rgba(107,58,31,.3)}
 .section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .sec-title{font-size:17px;font-weight:700;color:var(--red);margin-bottom:12px}
-.sec-oneliner{font-family:"Nanum Myeongjo",serif;font-size:16px;font-weight:800;color:#6b1a0a;background:rgba(192,57,43,.1);border-left:4px solid var(--red);padding:10px 14px;margin-bottom:14px;border-radius:0 6px 6px 0;line-height:1.6}
-.sec-body{font-family:"Nanum Myeongjo",serif;font-size:15.5px;font-weight:400;color:#2c1500;line-height:2.2;letter-spacing:.2px}
+.sec-oneliner{font-family:"Noto Sans KR",sans-serif;font-size:16px;font-weight:800;color:#6b1a0a;background:rgba(192,57,43,.1);border-left:4px solid var(--red);padding:10px 14px;margin-bottom:14px;border-radius:0 6px 6px 0;line-height:1.6}
+.sec-body{font-family:"Noto Sans KR",sans-serif;font-size:15.5px;font-weight:400;color:#2c1500;line-height:2.2;letter-spacing:.2px}
 .footer{text-align:center;color:rgba(245,230,200,.3);font-family:"Gowun Dodum",sans-serif;font-size:11px;padding-bottom:20px}
 .yundal-row{display:none;margin-top:8px}
 .yundal-row.show{display:flex}
@@ -281,15 +281,28 @@ function renderResult(saju, reading, name) {
   var p = saju.pillars;
   var html = "";
 
-  // 사주 그리드
+  // 사주 그리드 - 컬러 배경
+  var SC_BG = ["#5d4e75","#922b21","#1a5276","#1d6a3a"];
   html += "<div class=\"saju-grid\">";
   var lbls = ["연주","월주","일주","시주"];
   for (var i = 0; i < 4; i++) {
     var pl = p[i];
+    var bg = SC_BG[i];
     if (pl) {
-      html += "<div class=\"sc\"><div class=\"sc-lbl\">"+pl.label+"</div><div class=\"sc-sky\">"+pl.cg+"<div style=\"font-size:10px;color:#8b6914\">"+pl.cg_kr+"</div></div><div class=\"sc-earth\">"+pl.jj+"<div style=\"font-size:10px;color:#c0392b\">"+pl.jj_kr+"</div></div><div class=\"sc-sub\">"+pl.sipseong_cg+"/"+pl.sipseong_jj+"</div><div class=\"sc-sub\">"+pl.woonsung+"</div></div>";
+      html += "<div class=\"sc\" style=\"background:"+bg+"\">"
+        +"<div class=\"sc-lbl\">"+pl.label+"</div>"
+        +"<div class=\"sc-sky\">"+pl.cg+"</div>"
+        +"<div class=\"sc-sky-kr\">"+pl.cg_kr+"</div>"
+        +"<div class=\"sc-divider\"></div>"
+        +"<div class=\"sc-earth\">"+pl.jj+"</div>"
+        +"<div class=\"sc-earth-kr\">"+pl.jj_kr+"</div>"
+        +"<div class=\"sc-sub\">"+pl.sipseong_cg+" / "+pl.sipseong_jj+"<br>"+pl.woonsung+"</div>"
+        +"</div>";
     } else {
-      html += "<div class=\"sc\"><div class=\"sc-lbl\">"+lbls[i]+"</div><div style=\"font-size:13px;color:#aaa;padding:10px 0\">시간<br>미상</div></div>";
+      html += "<div class=\"sc\" style=\"background:"+bg+";opacity:.45\">"
+        +"<div class=\"sc-lbl\">"+lbls[i]+"</div>"
+        +"<div style=\"color:rgba(255,255,255,.7);font-size:12px;padding:24px 0\">시간<br>미상</div>"
+        +"</div>";
     }
   }
   html += "</div>";
