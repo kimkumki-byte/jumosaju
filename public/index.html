@@ -114,7 +114,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <label class="label">⚥ 성별</label>
       <div class="row">
         <div class="gbtn on" id="btn-male" onclick="setGender(this, '남')">🧔 도령</div>
-        <div class="gbtn" id="btn-female" onclick="setGender(this, '여')">👩 아가씨</div>
+        <div class="gbtn" id="btn-female" onclick="setGender(this, '여')">👩 아씨</div>
       </div>
     </div>
 
@@ -246,7 +246,7 @@ async function getSaju() {
     var calcRes = await fetch("/api/saju", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({year:y, month:m, day:d, hourStr:h, isLunar:calType==="lunar", isYundal:isYundal, gender:gender, name:name})
+      body: JSON.stringify({year:y, month:m, day:d, hourStr:h, isLunar:calType==="lunar", isYundal:isYundal, gender:gender, name:name, title:gender==="남"?"도령":"아씨"})
     });
     var calcData = await calcRes.json();
     if (!calcRes.ok) throw new Error(calcData.error || "오류 "+calcRes.status);
@@ -399,12 +399,16 @@ function renderResult(saju, reading, name) {
       var isFirst = (secIdx === 0);
       var openClass = isFirst ? " open" : "";
       var arrowStyle = isFirst ? "transform:rotate(180deg)" : "";
+      // 요약 한줄이 먼저, 그 다음 제목
       html += "<div class=\"section\">"
+        +(summaryHtml ? "<div class=\"sec-oneliner-top\" onclick=\"toggleSectionByOneliner(this)\">"
+          +summaryHtml.replace('class=\"sec-oneliner\"','class=\"sec-oneliner-inner\"')
+          +"</div>" : "")
         +"<div class=\"sec-title\" onclick=\"toggleSection(this)\">"
         +"<span class=\"sec-title-text\">"+cleanTitle(escHtml(s.title))+"</span>"
         +"<span class=\"sec-arrow\" style=\""+arrowStyle+"\">▼</span>"
         +"</div>"
-        +"<div class=\"sec-body-wrap"+openClass+"\">"+summaryHtml+"<div class=\"sec-body\">"+bodyHtml+"</div></div>"
+        +"<div class=\"sec-body-wrap"+openClass+"\"><div class=\"sec-body\">"+bodyHtml+"</div></div>"
         +"</div>";
     });
   } else {
@@ -432,6 +436,13 @@ function resetApp() {
     } else {
       wrap.classList.add('open');
       arrow.style.transform = 'rotate(180deg)';
+    }
+  }
+  function toggleSectionByOneliner(onelineEl) {
+    // 요약줄 클릭하면 바로 아래 sec-title 찾아서 토글
+    var titleEl = onelineEl.nextElementSibling;
+    if (titleEl && titleEl.classList.contains('sec-title')) {
+      toggleSection(titleEl);
     }
   }
 </script>

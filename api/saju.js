@@ -193,7 +193,7 @@ function fullCalc(input){
   };
 }
 
-function buildPrompt(data,name){
+function buildPrompt(data,name,title){
   const p=data.pillars;
   const pStr=p.map(pl=>`${pl.label}: ${pl.cg}${pl.jj}(${pl.cg_kr}${pl.jj_kr}) 십성:${pl.sipseong_cg}/${pl.sipseong_jj} 운성:${pl.woonsung}`).join('\n');
   const oh=data.ohaengCount;
@@ -204,7 +204,7 @@ function buildPrompt(data,name){
   return `당신은 조선시대 주막의 주모입니다. 아래 명리학 계산 결과를 근거로 사주 해설을 해주세요.
 
 [계산 데이터]
-이름: ${name} / 성별: ${data.gender} / ${dStr} / 태어난시: ${data.hourStr} / 띠: ${data.animal}
+이름: ${name} ${title||"님"} / 성별: ${data.gender} / ${dStr} / 태어난시: ${data.hourStr} / 띠: ${data.animal}
 [사주 원국]
 ${pStr}
 [오행 분포] ${oStr}
@@ -229,7 +229,7 @@ ${pStr}
 - 문장 끝: ~유, ~구먼유, ~겨, ~허유, ~당께유, ~허겄유, ~이랑께유 등 충청도 말투로만 끝내기
 - "합니다/입니다/요/어요/죠" 절대 사용 금지. 위반하면 안 됨.
 - 어이구, 에그머니나, 허참, 글쎄유 등 감탄사 자주 사용
-- ${name}님 이름 자주 부르기
+- 이름 호칭: 반드시 "${name} ${title||"님"}" 으로 부르기. 예: 남성이면 "김진수 도령", 여성이면 "김은혜 아씨". "님" 절대 사용 금지.
 - 막걸리 주막 장터 비유 자연스럽게
 
 [문체 규칙]
@@ -279,7 +279,8 @@ module.exports=async function(req,res){
   try{
     const body=typeof req.body==='string'?JSON.parse(req.body):req.body;
     const sajuData=fullCalc(body);
-    const prompt=buildPrompt(sajuData,body.name||'손님');
+    const title=body.gender==='남'?'도령':'아씨';
+    const prompt=buildPrompt(sajuData,body.name||'손님',title);
     const llm=await callAnthropic(apiKey,prompt);
     if(llm.error)throw new Error(llm.error.message||'API오류');
     res.status(200).json({saju:sajuData,reading:llm.content[0].text});
