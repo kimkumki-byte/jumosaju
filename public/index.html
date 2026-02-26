@@ -37,14 +37,13 @@ body{background:#1a0a00;background-image:repeating-linear-gradient(0deg,transpar
 input,select{background:rgba(255,255,255,.65);border:1.5px solid var(--smoke);border-radius:4px;padding:10px 12px;font-family:"Gowun Dodum",sans-serif;font-size:15px;color:var(--ink);outline:none;width:100%;-webkit-appearance:none;appearance:none}
 input:focus,select:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.15)}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b3a1f' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-color:rgba(255,255,255,.65);padding-right:28px}
-.gbtn{flex:1;padding:10px;background:rgba(255,255,255,.5);border:1.5px solid var(--smoke);border-radius:4px;font-family:"Gowun Dodum",sans-serif;font-size:14px;color:var(--smoke);cursor:pointer;text-align:center;transition:all .2s}
+.gbtn{flex:1;padding:10px;background:rgba(255,255,255,.5);border:1.5px solid var(--smoke);border-radius:4px;font-family:"Gowun Dodum",sans-serif;font-size:14px;color:var(--smoke);cursor:pointer;text-align:center;transition:all .2s;user-select:none}
 .gbtn.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:700}
 .btn-main{width:100%;padding:16px;background:linear-gradient(180deg,#c0392b,#962d22);border:none;border-radius:4px;color:#f5e6c8;font-family:"Nanum Myeongjo",serif;font-size:18px;font-weight:800;letter-spacing:3px;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(0,0,0,.4)}
 .btn-main:hover{background:linear-gradient(180deg,#d44235,#a83228);transform:translateY(-1px)}
 .btn-reset{width:100%;padding:12px;background:transparent;border:2px solid var(--paper);border-radius:4px;color:var(--paper);font-family:"Gowun Dodum",sans-serif;font-size:14px;cursor:pointer;margin-bottom:20px}
 .btn-reset:hover{background:rgba(245,230,200,.1)}
 #loading{display:none;text-align:center;padding:30px}
-#loading.show{display:block}
 .load-icon{font-size:40px;animation:pulse 1.5s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.95)}}
 .load-txt{font-family:"Gowun Dodum",sans-serif;font-size:14px;color:var(--smoke);margin-top:12px}
@@ -57,17 +56,15 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .sc-lbl{font-size:10px;color:var(--smoke);font-family:"Gowun Dodum",sans-serif;margin-bottom:4px}
 .sc-sky{font-size:22px;font-weight:700;color:var(--ink);line-height:1}
 .sc-earth{font-size:22px;font-weight:700;color:var(--red);line-height:1;margin-top:4px}
-.sc-ss{font-size:9px;color:var(--smoke);font-family:"Gowun Dodum",sans-serif;margin-top:3px}
-.sc-ws{font-size:9px;color:var(--wood);font-family:"Gowun Dodum",sans-serif;margin-top:2px}
+.sc-sub{font-size:9px;color:var(--smoke);font-family:"Gowun Dodum",sans-serif;margin-top:2px}
 .info-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)}
 .badge{background:rgba(255,255,255,.5);border:1px solid var(--smoke);border-radius:12px;padding:4px 10px;font-family:"Gowun Dodum",sans-serif;font-size:12px;color:var(--wood)}
 .badge.strong{background:rgba(192,57,43,.15);border-color:var(--red);color:var(--red);font-weight:700}
-.ohaeng-bar{margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)}
-.ohaeng-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-family:"Gowun Dodum",sans-serif;font-size:12px;color:var(--wood)}
-.ohaeng-label{width:24px;text-align:center;font-weight:700}
-.ohaeng-track{flex:1;height:10px;background:rgba(255,255,255,.3);border-radius:5px;overflow:hidden}
-.ohaeng-fill{height:100%;border-radius:5px;transition:width .5s}
-.oh-목{background:#2d8a4e}.oh-화{background:#c0392b}.oh-토{background:#b8860b}.oh-금{background:#7f8c8d}.oh-수{background:#2980b9}
+.oh-bar{margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)}
+.oh-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-family:"Gowun Dodum",sans-serif;font-size:12px;color:var(--wood)}
+.oh-lbl{width:24px;text-align:center;font-weight:700}
+.oh-track{flex:1;height:10px;background:rgba(255,255,255,.3);border-radius:5px;overflow:hidden}
+.oh-fill{height:100%;border-radius:5px}
 .section{margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed rgba(107,58,31,.3)}
 .section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .sec-title{font-size:15px;font-weight:700;color:var(--red);margin-bottom:10px}
@@ -75,6 +72,9 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .footer{text-align:center;color:rgba(245,230,200,.3);font-family:"Gowun Dodum",sans-serif;font-size:11px;padding-bottom:20px}
 .yundal-row{display:none;margin-top:8px}
 .yundal-row.show{display:flex}
+.api-box{margin-bottom:18px;padding:12px;background:rgba(0,0,0,.15);border:1px dashed var(--smoke);border-radius:4px}
+.api-label{font-family:"Gowun Dodum",sans-serif;font-size:11px;color:var(--smoke);margin-bottom:6px}
+.api-input{font-size:12px;letter-spacing:1px}
 </style>
 </head>
 <body>
@@ -95,6 +95,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
   <div class="paper" id="formSection">
     <div class="form-title">📜 사주 <span>적어내기</span></div>
+<input type="password" id="apiKey" class="api-input" placeholder="sk-ant-api03-...">
+    </div>
 
     <div class="field">
       <label class="label">📛 이름</label>
@@ -104,25 +106,23 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div class="field">
       <label class="label">⚥ 성별</label>
       <div class="row">
-        <div class="gbtn on" id="btn-male" onclick="setGender('남')">🧔 도령</div>
-        <div class="gbtn" id="btn-female" onclick="setGender('여')">👩 아가씨</div>
+        <div class="gbtn on" id="btn-male" onclick="setGender(this, '남')">🧔 도령</div>
+        <div class="gbtn" id="btn-female" onclick="setGender(this, '여')">👩 아가씨</div>
       </div>
     </div>
 
     <div class="field">
       <label class="label">📅 생년월일</label>
-      <!-- 양력/음력 선택 -->
-      <div class="row" style="margin-bottom:8px">
-        <div class="gbtn on" onclick="setCalType(this,'solar')" id="btn-solar">☀️ 양력</div>
-        <div class="gbtn" onclick="setCalType(this,'lunar')" id="btn-lunar">🌙 음력</div>
+      <div class="row">
+        <div class="gbtn on" id="btn-solar" onclick="setCalType(this, 'solar')">☀️ 양력</div>
+        <div class="gbtn" id="btn-lunar" onclick="setCalType(this, 'lunar')">🌙 음력</div>
       </div>
-      <!-- 윤달 선택 (음력 선택시만 표시) -->
-      <div class="yundal-row row" id="yundalRow">
-        <div class="gbtn on" onclick="setYundal(this,false)" id="btn-noyundal">일반달</div>
-        <div class="gbtn" onclick="setYundal(this,true)" id="btn-yundal">윤달 🌕</div>
+      <div class="yundal-row row" id="yundalRow" style="margin-top:8px">
+        <div class="gbtn on" id="btn-noyundal" onclick="setYundal(this, false)">일반달</div>
+        <div class="gbtn" id="btn-yundal" onclick="setYundal(this, true)">윤달 🌕</div>
       </div>
       <div class="row" style="margin-top:8px">
-        <input type="number" id="yearInput" placeholder="년도 (예:1990)" min="1900" max="2025" style="flex:2">
+        <input type="number" id="yearInput" placeholder="연도(예:1990)" min="1900" max="2025" style="flex:2">
         <select id="monthInput" style="flex:1">
           <option value="">월</option>
           <option value="1">1월</option><option value="2">2월</option><option value="3">3월</option>
@@ -138,18 +138,18 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <label class="label">🕐 태어난 시간 <span style="font-size:10px;color:#aaa;font-weight:400">(모르면 모름)</span></label>
       <select id="hourInput">
         <option value="모름">⏰ 모름</option>
-        <option value="자시(23~01시)">🌑 자시 (밤 11시~새벽 1시)</option>
-        <option value="축시(01~03시)">🌒 축시 (새벽 1시~3시)</option>
-        <option value="인시(03~05시)">🌓 인시 (새벽 3시~5시)</option>
-        <option value="묘시(05~07시)">🌅 묘시 (새벽 5시~7시)</option>
-        <option value="진시(07~09시)">☀️ 진시 (오전 7시~9시)</option>
-        <option value="사시(09~11시)">🌤 사시 (오전 9시~11시)</option>
-        <option value="오시(11~13시)">☀️ 오시 (오전 11시~오후 1시)</option>
-        <option value="미시(13~15시)">🌤 미시 (오후 1시~3시)</option>
-        <option value="신시(15~17시)">🌇 신시 (오후 3시~5시)</option>
-        <option value="유시(17~19시)">🌆 유시 (오후 5시~7시)</option>
-        <option value="술시(19~21시)">🌙 술시 (오후 7시~9시)</option>
-        <option value="해시(21~23시)">🌕 해시 (밤 9시~11시)</option>
+        <option value="자시">🌑 자시 (밤 11시~새벽 1시)</option>
+        <option value="축시">🌒 축시 (새벽 1~3시)</option>
+        <option value="인시">🌓 인시 (새벽 3~5시)</option>
+        <option value="묘시">🌅 묘시 (새벽 5~7시)</option>
+        <option value="진시">☀️ 진시 (오전 7~9시)</option>
+        <option value="사시">🌤 사시 (오전 9~11시)</option>
+        <option value="오시">☀️ 오시 (오전 11~오후 1시)</option>
+        <option value="미시">🌤 미시 (오후 1~3시)</option>
+        <option value="신시">🌇 신시 (오후 3~5시)</option>
+        <option value="유시">🌆 유시 (오후 5~7시)</option>
+        <option value="술시">🌙 술시 (오후 7~9시)</option>
+        <option value="해시">🌕 해시 (밤 9~11시)</option>
       </select>
     </div>
 
@@ -171,191 +171,188 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </div>
 
 <script>
-let gender = '남';
-let calType = 'solar';
-let isYundal = false;
+var gender = "남";
+var calType = "solar";
+var isYundal = false;
 
-document.getElementById('monthInput').addEventListener('change', fillDays);
-document.getElementById('yearInput').addEventListener('input', fillDays);
+document.getElementById("monthInput").addEventListener("change", fillDays);
+document.getElementById("yearInput").addEventListener("input", fillDays);
 
 function fillDays() {
-  const y = parseInt(document.getElementById('yearInput').value) || 2000;
-  const m = parseInt(document.getElementById('monthInput').value);
-  const sel = document.getElementById('dayInput');
-  const prev = sel.value;
-  sel.innerHTML = '<option value="">일</option>';
+  var y = parseInt(document.getElementById("yearInput").value) || 2000;
+  var m = parseInt(document.getElementById("monthInput").value);
+  var sel = document.getElementById("dayInput");
+  var prev = sel.value;
+  sel.innerHTML = "<option value=''>일</option>";
   if (!m) return;
-  for (let i = 1; i <= new Date(y, m, 0).getDate(); i++) {
-    const o = document.createElement('option');
-    o.value = i; o.textContent = i + '일';
+  for (var i = 1; i <= new Date(y, m, 0).getDate(); i++) {
+    var o = document.createElement("option");
+    o.value = i; o.textContent = i + "일";
     sel.appendChild(o);
   }
   if (prev) sel.value = prev;
 }
 
-function setGender(g) {
+function setGender(el, g) {
   gender = g;
-  document.getElementById('btn-male').classList.toggle('on', g === '남');
-  document.getElementById('btn-female').classList.toggle('on', g === '여');
+  document.getElementById("btn-male").classList.toggle("on", g === "남");
+  document.getElementById("btn-female").classList.toggle("on", g === "여");
 }
 
 function setCalType(el, type) {
   calType = type;
-  document.getElementById('btn-solar').classList.toggle('on', type === 'solar');
-  document.getElementById('btn-lunar').classList.toggle('on', type === 'lunar');
-  document.getElementById('yundalRow').classList.toggle('show', type === 'lunar');
+  document.getElementById("btn-solar").classList.toggle("on", type === "solar");
+  document.getElementById("btn-lunar").classList.toggle("on", type === "lunar");
+  document.getElementById("yundalRow").classList.toggle("show", type === "lunar");
 }
 
 function setYundal(el, val) {
   isYundal = val;
-  document.getElementById('btn-noyundal').classList.toggle('on', !val);
-  document.getElementById('btn-yundal').classList.toggle('on', val);
+  document.getElementById("btn-noyundal").classList.toggle("on", !val);
+  document.getElementById("btn-yundal").classList.toggle("on", val);
 }
 
-const LOADS = ['주모가 향불을 피우고 있수다...','팔자를 들여다보는 중이수...','막걸리 한 잔 따르며 점을 치는 중...','천간 지지를 살펴보고 있수다...','오행을 헤아리고 있수다...','용신을 찾고 있수다...'];
-const EMOJIS = ['🌟','💪','🎯','💕','💰','🌿','🍶'];
-const OH_COLORS = {'목':'#2d8a4e','화':'#c0392b','토':'#b8860b','금':'#7f8c8d','수':'#2980b9'};
+var LOADS = ["주모가 향불을 피우고 있수다...","팔자를 들여다보는 중이수...","막걸리 한 잔 따르며 점을 치는 중...","천간 지지를 살펴보고 있수다...","오행을 헤아리고 있수다...","용신을 찾고 있수다..."];
+var OH_COLORS = {목:"#2d8a4e",화:"#c0392b",토:"#b8860b",금:"#7f8c8d",수:"#2980b9"};
+var EMOJIS = ["🌟","💪","🎯","💕","💰","🌿","🍶"];
 
 async function getSaju() {
-  const name = document.getElementById('nameInput').value.trim() || '손님';
-  const y = parseInt(document.getElementById('yearInput').value);
-  const m = parseInt(document.getElementById('monthInput').value);
-  const d = parseInt(document.getElementById('dayInput').value);
-  const h = document.getElementById('hourInput').value;
+  var name = document.getElementById("nameInput").value.trim() || "손님";
+  var y = parseInt(document.getElementById("yearInput").value);
+  var m = parseInt(document.getElementById("monthInput").value);
+  var d = parseInt(document.getElementById("dayInput").value);
+  var h = document.getElementById("hourInput").value;
 
-  if (!y || y < 1900 || y > 2025) { alert('태어난 연도를 올바르게 적어주슈!'); return; }
-  if (!m) { alert('태어난 달을 골라주슈!'); return; }
-  if (!d) { alert('태어난 날을 골라주슈!'); return; }
+  if (!y || y < 1900 || y > 2025) { alert("태어난 연도를 올바르게 적어주슈!"); return; }
+  if (!m) { alert("태어난 달을 골라주슈!"); return; }
+  if (!d) { alert("태어난 날을 골라주슈!"); return; }
 
-  document.getElementById('formSection').style.display = 'none';
-  document.getElementById('result').classList.remove('show');
-  const loadEl = document.getElementById('loading');
-  loadEl.style.display = 'block';
-  let li = 0;
-  const lt = setInterval(() => { document.getElementById('loadTxt').textContent = LOADS[li++ % LOADS.length]; }, 1800);
+  document.getElementById("formSection").style.display = "none";
+  document.getElementById("result").classList.remove("show");
+  var loadEl = document.getElementById("loading");
+  loadEl.style.display = "block";
+  var li = 0;
+  var lt = setInterval(function() { document.getElementById("loadTxt").textContent = LOADS[li++ % LOADS.length]; }, 1800);
 
   try {
-    const res = await fetch('/.netlify/functions/saju', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ year: y, month: m, day: d, hourStr: h, isLunar: calType === 'lunar', isYundal, gender, name })
+    // 서버에서 사주계산 + 해설 한번에
+    var calcRes = await fetch("/.netlify/functions/saju", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({year:y, month:m, day:d, hourStr:h, isLunar:calType==="lunar", isYundal:isYundal, gender:gender, name:name})
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error((data.error) || '오류 ' + res.status);
+    var calcData = await calcRes.json();
+    if (!calcRes.ok) throw new Error(calcData.error || "오류 "+calcRes.status);
 
     clearInterval(lt);
-    loadEl.style.display = 'none';
+    loadEl.style.display = "none";
+    renderResult(calcData.saju, calcData.reading, name);
+    document.getElementById("result").classList.add("show");
+    document.getElementById("resetBtn").style.display = "block";
+    document.getElementById("speech").textContent = "어이구~ 다 봤수! 팔자 한 사발 드렸으니 막걸리 한 잔 하고 가슈~ 🍶";
+    document.getElementById("result").scrollIntoView({behavior:"smooth", block:"start"});
 
-    renderResult(data.saju, data.reading, name, calType, isYundal);
-    document.getElementById('result').classList.add('show');
-    document.getElementById('resetBtn').style.display = 'block';
-    document.getElementById('speech').textContent = '어이구~ 다 봤수! 팔자 한 사발 드렸으니 막걸리 한 잔 하고 가슈~ 🍶';
-    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  } catch (err) {
+  } catch(err) {
     clearInterval(lt);
-    loadEl.style.display = 'none';
-    document.getElementById('formSection').style.display = 'block';
-    alert('아이구~ 오류가 났수다!\n' + err.message);
+    loadEl.style.display = "none";
+    document.getElementById("formSection").style.display = "block";
+    alert("아이구~ 오류가 났수다!\n" + err.message);
   }
 }
 
-function renderResult(saju, reading, name, calType, isYundal) {
-  const p = saju.pillars;
-  let html = '';
+function buildPrompt(saju, name) {
+  var p = saju.pillars;
+  var pillarStr = p.map(function(pl) {
+    return pl.label + ": " + pl.cg + pl.jj + "(" + pl.cg_kr + pl.jj_kr + ") | 십성: 천간-" + pl.sipseong_cg + "/지지-" + pl.sipseong_jj + " | 12운성: " + pl.woonsung + " | 지장간: " + pl.jijanggan.map(function(j){return j.cg;}).join(",");
+  }).join("\n");
+  var oh = saju.ohaengCount;
+  var oStr = Object.keys(oh).map(function(k){return k+":"+oh[k].toFixed(1);}).join(" ");
+  var rel = saju.relations;
+  var relStr = [].concat(rel.hap, rel.chung, rel.pa).join(", ") || "없음";
+  var sd = saju.solarDate, od = saju.originalDate;
+  var dateStr = od.isLunar ? "음력 "+od.year+"년 "+od.month+"월 "+od.day+"일"+(od.isYundal?"(윤달)":"")+" → 양력 "+sd.year+"."+sd.month+"."+sd.day : "양력 "+sd.year+"년 "+sd.month+"월 "+sd.day+"일";
+  var ilju = p[2] ? p[2].cg+p[2].jj : "일주";
+
+  return "당신은 조선시대 주막의 주모입니다. 아래 명리학 계산 결과만을 근거로 사주 해설을 해주세요.\n\n[계산 데이터]\n이름: "+name+" / 성별: "+saju.gender+" / "+dateStr+" / 태어난시: "+saju.hourStr+" / 띠: "+saju.animal+"\n\n[사주 원국]\n"+pillarStr+"\n\n[오행] "+oStr+"\n[신강신약] "+saju.shingang.result+" ("+saju.shingang.ratio+"%)\n[용신] "+saju.yongshin.primary+" — "+saju.yongshin.reason+"\n[공망] "+saju.gongmang.join(", ")+"\n[합충파] "+relStr+"\n\n[말투 규칙]\n- 조선 주막 주모의 구수한 사투리 (예: ~수다, ~이수, 어이구, 에그머니나)\n- "+name+"님 이름 자주 부르기\n- 막걸리·주막·장터 비유 자연스럽게\n- 반드시 위 계산 데이터 근거로만 해설\n- 근거 명시: 오행·신강약·일주명 등 언급\n\n[해설 구조 — 순서대로 7섹션, 이모지+제목으로 시작, 각 4~6줄]\n🌟 총평\n💪 일주 분석 ("+ilju+")\n🎯 오행과 용신\n💕 인연운\n💰 재물·직업운\n🌿 건강·주의사항\n🍶 주모의 한마디";
+}
+
+function renderResult(saju, reading, name) {
+  var p = saju.pillars;
+  var html = "";
 
   // 사주 그리드
-  html += '<div class="saju-grid">';
-  const pillarLabels = ['연주','월주','일주','시주'];
-  for (let i = 0; i < 4; i++) {
-    const pl = p[i];
+  html += "<div class=\"saju-grid\">";
+  var lbls = ["연주","월주","일주","시주"];
+  for (var i = 0; i < 4; i++) {
+    var pl = p[i];
     if (pl) {
-      html += `<div class="sc">
-        <div class="sc-lbl">${pl.label}</div>
-        <div class="sc-sky">${pl.cg || '?'}
-          <div style="font-size:10px;color:#8b6914;font-family:sans-serif">${pl.cg_kr||''}</div>
-        </div>
-        <div class="sc-earth">${pl.jj || '?'}
-          <div style="font-size:10px;color:#c0392b;font-family:sans-serif">${pl.jj_kr||''}</div>
-        </div>
-        <div class="sc-ss">${pl.sipseong_cg||''} / ${pl.sipseong_jj||''}</div>
-        <div class="sc-ws">${pl.woonsung||''}</div>
-      </div>`;
+      html += "<div class=\"sc\"><div class=\"sc-lbl\">"+pl.label+"</div><div class=\"sc-sky\">"+pl.cg+"<div style=\"font-size:10px;color:#8b6914\">"+pl.cg_kr+"</div></div><div class=\"sc-earth\">"+pl.jj+"<div style=\"font-size:10px;color:#c0392b\">"+pl.jj_kr+"</div></div><div class=\"sc-sub\">"+pl.sipseong_cg+"/"+pl.sipseong_jj+"</div><div class=\"sc-sub\">"+pl.woonsung+"</div></div>";
     } else {
-      html += `<div class="sc"><div class="sc-lbl">${pillarLabels[i]}</div><div class="sc-sky" style="font-size:14px;color:#aaa;padding:10px 0">시간<br>미상</div></div>`;
+      html += "<div class=\"sc\"><div class=\"sc-lbl\">"+lbls[i]+"</div><div style=\"font-size:13px;color:#aaa;padding:10px 0\">시간<br>미상</div></div>";
     }
   }
-  html += '</div>';
+  html += "</div>";
 
-  // 기본 정보 배지
-  const d = saju.originalDate;
-  const sd = saju.solarDate;
-  const dateStr = d.isLunar
-    ? `${d.year}년 ${d.month}월 ${d.day}일 음력${d.isYundal?'(윤달)':''} → 양력 ${sd.year}.${sd.month}.${sd.day}`
-    : `${sd.year}년 ${sd.month}월 ${sd.day}일`;
-  html += `<div class="info-row">
-    <span class="badge">${saju.animal}</span>
-    <span class="badge">${dateStr}</span>
-    ${saju.hourStr !== '모름' ? `<span class="badge">${saju.hourStr}</span>` : ''}
-    <span class="badge strong">${saju.shingang.result}</span>
-    <span class="badge">용신: ${saju.yongshin.primary}</span>
-    <span class="badge">공망: ${saju.gongmang.join(' ')}</span>
-  </div>`;
+  // 정보 배지
+  var sd = saju.solarDate, od = saju.originalDate;
+  var dateStr = od.isLunar ? od.year+"년 "+od.month+"월 "+od.day+"일 음력 → 양력 "+sd.year+"."+sd.month+"."+sd.day : sd.year+"년 "+sd.month+"월 "+sd.day+"일";
+  html += "<div class=\"info-row\">";
+  html += "<span class=\"badge\">"+saju.animal+"</span>";
+  html += "<span class=\"badge\">"+dateStr+"</span>";
+  if (saju.hourStr !== "모름") html += "<span class=\"badge\">"+saju.hourStr+"</span>";
+  html += "<span class=\"badge strong\">"+saju.shingang.result+"</span>";
+  html += "<span class=\"badge\">용신: "+saju.yongshin.primary+"</span>";
+  html += "<span class=\"badge\">공망: "+saju.gongmang.join(" ")+"</span>";
+  html += "</div>";
 
-  // 오행 바 차트
-  html += '<div class="ohaeng-bar"><div style="font-size:12px;font-weight:700;color:var(--wood);margin-bottom:8px">⚖️ 오행 분포</div>';
-  const ohTotal = Object.values(saju.ohaengCount).reduce((a,b)=>a+b,0);
-  for (const [oh, val] of Object.entries(saju.ohaengCount)) {
-    const pct = Math.round(val / ohTotal * 100);
-    html += `<div class="ohaeng-row">
-      <span class="ohaeng-label" style="color:${OH_COLORS[oh]}">${oh}</span>
-      <div class="ohaeng-track"><div class="ohaeng-fill oh-${oh}" style="width:${pct}%;background:${OH_COLORS[oh]}"></div></div>
-      <span style="font-size:11px;width:30px;text-align:right">${pct}%</span>
-    </div>`;
+  // 오행 바
+  var oh = saju.ohaengCount;
+  var total = Object.values(oh).reduce(function(a,b){return a+b;},0);
+  html += "<div class=\"oh-bar\"><div style=\"font-size:12px;font-weight:700;color:var(--wood);margin-bottom:8px\">⚖️ 오행 분포</div>";
+  for (var k in oh) {
+    var pct = Math.round(oh[k]/total*100);
+    html += "<div class=\"oh-row\"><span class=\"oh-lbl\" style=\"color:"+OH_COLORS[k]+"\">"+k+"</span><div class=\"oh-track\"><div class=\"oh-fill\" style=\"width:"+pct+"%;background:"+OH_COLORS[k]+"\"></div></div><span style=\"font-size:11px;width:30px;text-align:right\">"+pct+"%</span></div>";
   }
-  html += '</div>';
+  html += "</div>";
 
-  // 합충형파
-  const rel = saju.relations;
-  const relItems = [...rel.hap, ...rel.chung, ...rel.pa];
+  // 합충파
+  var rel = saju.relations;
+  var relItems = [].concat(rel.hap, rel.chung, rel.pa);
   if (relItems.length > 0) {
-    html += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)">
-      <div style="font-size:12px;font-weight:700;color:var(--wood);margin-bottom:6px;font-family:sans-serif">🔗 합충파</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">
-        ${relItems.map(r => `<span class="badge">${r}</span>`).join('')}
-      </div>
-    </div>`;
+    html += "<div style=\"margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)\"><div style=\"font-size:12px;font-weight:700;color:var(--wood);margin-bottom:6px\">🔗 합충파</div><div style=\"display:flex;flex-wrap:wrap;gap:6px\">";
+    relItems.forEach(function(r){ html += "<span class=\"badge\">"+r+"</span>"; });
+    html += "</div></div>";
   }
 
-  // AI 해설 섹션 파싱
-  const lines = reading.split('\n');
-  let sections = [], cur = null;
-  for (const line of lines) {
-    const t = line.trim(); if (!t) continue;
-    if (EMOJIS.some(e => t.startsWith(e))) {
+  // AI 해설
+  var lines = reading.split("\n");
+  var sections = [], cur = null;
+  lines.forEach(function(line) {
+    var t = line.trim(); if (!t) return;
+    if (EMOJIS.some(function(e){return t.startsWith(e);})) {
       if (cur) sections.push(cur);
-      cur = { title: t, body: [] };
+      cur = {title:t, body:[]};
     } else if (cur) cur.body.push(t);
-  }
+  });
   if (cur) sections.push(cur);
 
   if (sections.length >= 2) {
-    sections.forEach(s => {
-      html += `<div class="section"><div class="sec-title">${s.title}</div><div class="sec-body">${s.body.join('<br>')}</div></div>`;
+    sections.forEach(function(s) {
+      html += "<div class=\"section\"><div class=\"sec-title\">"+s.title+"</div><div class=\"sec-body\">"+s.body.join("<br>")+"</div></div>";
     });
   } else {
-    html += `<div class="section"><div class="sec-body">${reading.replace(/\n/g,'<br>')}</div></div>`;
+    html += "<div class=\"section\"><div class=\"sec-body\">"+reading.replace(/\n/g,"<br>")+"</div></div>";
   }
 
-  document.getElementById('resultBody').innerHTML = html;
+  document.getElementById("resultBody").innerHTML = html;
 }
 
 function resetApp() {
-  document.getElementById('formSection').style.display = 'block';
-  document.getElementById('result').classList.remove('show');
-  document.getElementById('resetBtn').style.display = 'none';
-  document.getElementById('speech').textContent = '어이~ 손님! 어서오슈~ 오늘 어디서 바람이 불어왔수? 어디 생년월일 한번 내보슈, 주모가 팔자 한번 봐드리리다!';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById("formSection").style.display = "block";
+  document.getElementById("result").classList.remove("show");
+  document.getElementById("resetBtn").style.display = "none";
+  document.getElementById("speech").textContent = "어이~ 손님! 어서오슈~ 오늘 어디서 바람이 불어왔수? 어디 생년월일 한번 내보슈, 주모가 팔자 한번 봐드리리다!";
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 </script>
 </body>
