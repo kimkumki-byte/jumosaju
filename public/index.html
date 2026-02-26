@@ -51,12 +51,15 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 #result.show{display:block;animation:fadeIn .5s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .res-hd{background:var(--red);padding:16px 20px;text-align:center;color:var(--paper);font-size:16px;font-weight:700;letter-spacing:2px;margin:-24px -20px 20px}
-.saju-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px}
-.sc{background:rgba(255,255,255,.5);border:1.5px solid var(--smoke);border-radius:4px;padding:8px 4px;text-align:center}
-.sc-lbl{font-size:12px;color:var(--smoke);font-family:"Gowun Dodum",sans-serif;margin-bottom:4px}
-.sc-sky{font-size:26px;font-weight:700;color:var(--ink);line-height:1}
-.sc-earth{font-size:26px;font-weight:700;color:var(--red);line-height:1;margin-top:4px}
-.sc-sub{font-size:11px;color:var(--smoke);font-family:"Gowun Dodum",sans-serif;margin-top:2px}
+.saju-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.sc{border-radius:6px;overflow:hidden;text-align:center;box-shadow:1px 2px 6px rgba(0,0,0,.15)}
+.sc-lbl{font-size:11px;color:#fff;font-family:"Gowun Dodum",sans-serif;padding:5px 4px 3px;background:rgba(0,0,0,.2);letter-spacing:1px}
+.sc-sky{font-size:32px;font-weight:800;color:#fff;line-height:1;padding:10px 4px 2px;text-shadow:1px 1px 3px rgba(0,0,0,.2)}
+.sc-sky-kr{font-size:11px;color:rgba(255,255,255,.8);padding-bottom:2px}
+.sc-divider{height:1px;background:rgba(255,255,255,.3);margin:0 10px}
+.sc-earth{font-size:32px;font-weight:800;line-height:1;padding:8px 4px 2px;text-shadow:1px 1px 3px rgba(0,0,0,.2)}
+.sc-earth-kr{font-size:11px;padding-bottom:4px;opacity:.85}
+.sc-sub{font-size:10px;color:rgba(255,255,255,.75);font-family:"Gowun Dodum",sans-serif;padding:2px 4px 6px;background:rgba(0,0,0,.1)}
 .info-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)}
 .badge{background:rgba(255,255,255,.5);border:1px solid var(--smoke);border-radius:12px;padding:4px 10px;font-family:"Gowun Dodum",sans-serif;font-size:12px;color:var(--wood)}
 .badge.strong{background:rgba(192,57,43,.15);border-color:var(--red);color:var(--red);font-weight:700}
@@ -360,7 +363,7 @@ function renderResult(saju, reading, name) {
       if(bodyLines.length > 0) {
         // 첫 줄이 핵심 한줄 요약 (느낌표나 물음표로 끝나는 짧은 문장)
         var firstLine = bodyLines[0];
-        if(firstLine.length < 60 && (firstLine.endsWith("!") || firstLine.endsWith("?"))) {
+        if(firstLine.length < 80 && (firstLine.endsWith("!") || firstLine.endsWith("?") || firstLine.endsWith("다") || firstLine.endsWith("요"))) {
           bodyHtml = "<div class=\"sec-oneliner\">"+firstLine+"</div>";
           bodyHtml += bodyLines.slice(1).join("<br>");
         } else {
