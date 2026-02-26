@@ -50,40 +50,104 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 #result{display:none}
 #result.show{display:block;animation:fadeIn .5s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.res-hd{background:var(--red);padding:16px 20px;text-align:center;color:var(--paper);font-size:16px;font-weight:700;letter-spacing:2px;margin:-24px -20px 20px}
-.saju-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
-.sc{border-radius:8px;overflow:hidden;text-align:center;box-shadow:3px 4px 14px rgba(0,0,0,.5)}
-.sc-lbl{font-size:11px;color:rgba(255,255,255,.9);font-family:"Gowun Dodum",sans-serif;padding:7px 4px 5px;background:rgba(0,0,0,.3);letter-spacing:2px;font-weight:700}
-.sc-sky{font-size:36px;font-weight:900;color:#fff;line-height:1;padding:14px 4px 0;text-shadow:2px 2px 6px rgba(0,0,0,.5)}
-.sc-sky-kr{font-size:13px;color:#fff;padding-bottom:4px;font-weight:700;font-family:"Gowun Dodum",sans-serif}
-.sc-divider{height:1px;background:rgba(255,255,255,.35);margin:4px 12px}
-.sc-earth{font-size:36px;font-weight:900;color:#fff;line-height:1;padding:8px 4px 0;text-shadow:2px 2px 6px rgba(0,0,0,.5)}
-.sc-earth-kr{font-size:13px;color:#fff;padding-bottom:4px;font-weight:700;font-family:"Gowun Dodum",sans-serif}
-.sc-sub{font-size:11px;color:rgba(255,255,255,.95);font-family:"Gowun Dodum",sans-serif;padding:5px 4px 9px;background:rgba(0,0,0,.28);font-weight:600;line-height:1.6}
-.info-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)}
-.badge{background:rgba(255,255,255,.5);border:1px solid var(--smoke);border-radius:12px;padding:4px 10px;font-family:"Gowun Dodum",sans-serif;font-size:12px;color:var(--wood)}
-.badge.strong{background:rgba(192,57,43,.15);border-color:var(--red);color:var(--red);font-weight:700}
-.oh-bar{margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)}
-.oh-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-family:"Gowun Dodum",sans-serif;font-size:12px;color:var(--wood)}
-.oh-lbl{width:60px;font-size:11px;font-weight:700}
-.oh-track{flex:1;height:10px;background:rgba(255,255,255,.3);border-radius:5px;overflow:hidden}
-.oh-fill{height:100%;border-radius:5px}
-.section{margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed rgba(107,58,31,.3)}
-.section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
-.sec-title{font-size:17px;font-weight:700;color:var(--red);margin-bottom:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:14px 0;user-select:none}
-.sec-title-text{display:flex;align-items:center;gap:6px}
-.sec-arrow{font-size:12px;color:var(--smoke);transition:transform .3s;flex-shrink:0}
-.sec-body-wrap{overflow:hidden;transition:max-height .35s ease,opacity .3s ease;max-height:0;opacity:0}
-.sec-body-wrap.open{max-height:2000px;opacity:1}
-.section{border-bottom:1px dashed rgba(107,58,31,.25);margin-bottom:0;padding:0}
+.res-hd{
+  background:linear-gradient(135deg,#8b1a1a,#5c1010);
+  padding:16px 20px;
+  text-align:center;
+  color:#fff;
+  font-family:"Noto Serif KR",serif;
+  font-size:16px;
+  font-weight:900;
+  letter-spacing:3px;
+  position:relative;
+}
+.res-hd::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f5c842,#e8a020,#f5c842)}
+
+/* 결과 이름 헤더 */
+.result-header{
+  background:linear-gradient(135deg,#8b1a1a,#5c1010);
+  padding:18px 20px 16px;
+  text-align:center;
+  position:relative;
+}
+.result-header::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f5c842,#e8a020,#f5c842)}
+.result-name{font-family:"Noto Serif KR",serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:10px}
+.result-name span{color:#f5c842}
+.result-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.result-tag{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:12px;color:rgba(255,255,255,.85)}
+.result-tag.gold{background:rgba(245,200,66,.2);border-color:rgba(245,200,66,.5);color:#f5c842;font-weight:700}
+
+/* 만세력/사주풀이 구분 배너 */
+.divider-banner{
+  background:linear-gradient(135deg,#1a0a00,#3d1800,#1a0a00);
+  border-top:2px solid #f5c842;
+  border-bottom:2px solid #f5c842;
+  padding:13px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+}
+.divider-text{font-family:"Noto Serif KR",serif;font-size:15px;font-weight:900;color:#f5c842;letter-spacing:6px;text-shadow:0 0 12px rgba(245,200,66,.4)}
+
+/* 만세력 그리드 - 행 기반 */
+.saju-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto auto auto auto;margin-bottom:0}
+.col-header{padding:8px 4px;font-size:10px;font-weight:700;letter-spacing:2px;color:#8b5e3c;background:rgba(139,94,60,.07);border-bottom:1px solid rgba(139,94,60,.15);border-right:1px solid rgba(139,94,60,.12);text-align:center}
+.col-header:last-child{border-right:none}
+.col-sky{padding:14px 4px 4px;background:linear-gradient(180deg,#f5f0e8,#ede5d5);border-bottom:1px solid rgba(139,94,60,.15);border-right:1px solid rgba(139,94,60,.12);text-align:center}
+.col-sky:last-child{border-right:none}
+.col-sky.empty{display:flex;align-items:center;justify-content:center;color:rgba(139,94,60,.2);font-size:18px}
+.sky-char{font-family:"Noto Serif KR",serif;font-size:32px;font-weight:900;color:#2c1a0e;line-height:1;display:block}
+.sky-kr{font-size:11px;color:#8b5e3c;font-weight:700;margin-top:3px;display:block;padding-bottom:8px}
+.col-earth{padding:12px 4px 4px;background:linear-gradient(180deg,#2d1200,#1f0d00);border-bottom:1px solid rgba(139,94,60,.2);border-right:1px solid rgba(100,60,20,.3);text-align:center}
+.col-earth:last-child{border-right:none}
+.col-earth.empty{display:flex;align-items:center;justify-content:center;color:rgba(245,200,66,.15);font-size:18px}
+.earth-char{font-family:"Noto Serif KR",serif;font-size:32px;font-weight:900;color:#f5c842;line-height:1;display:block}
+.earth-kr{font-size:11px;color:rgba(245,200,66,.7);font-weight:700;margin-top:3px;display:block;padding-bottom:8px}
+.col-sub{padding:5px 4px 8px;background:#1a0a00;font-size:10px;color:rgba(255,255,255,.5);line-height:1.6;border-right:1px solid rgba(100,60,20,.3);text-align:center}
+.col-sub:last-child{border-right:none}
+.col-sub.empty{color:rgba(255,255,255,.15)}
+
+/* 정보 배지 */
+.info-row{padding:12px 16px;display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid rgba(139,94,60,.12);background:#fff9f0}
+.badge{background:#fff;border:1px solid rgba(139,94,60,.2);border-radius:20px;padding:4px 12px;font-size:12px;color:#5c3a1e;font-weight:500}
+.badge.strong{background:rgba(139,26,26,.08);border-color:rgba(139,26,26,.3);color:#8b1a1a;font-weight:700}
+.badge.gold{background:rgba(180,120,20,.1);border-color:rgba(180,120,20,.3);color:#7a5200;font-weight:700}
+
+/* 오행 바 */
+.oh-bar{margin-bottom:0;padding:14px 20px;border-bottom:1px solid rgba(139,94,60,.12);background:#fff9f0}
+.oh-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.oh-row:last-child{margin-bottom:0}
+.oh-name{font-size:12px;font-weight:700;width:20px;text-align:center;flex-shrink:0}
+.oh-track{flex:1;height:8px;background:rgba(139,94,60,.1);border-radius:4px;overflow:hidden}
+.oh-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.oh-pct{font-size:11px;color:#8b5e3c;width:36px;text-align:right;flex-shrink:0}
+
+/* 합충파 */
+.hcp-wrap{padding:10px 20px 14px;background:#fff9f0;border-bottom:1px solid rgba(139,94,60,.12)}
+.hcp-lbl{font-size:10px;color:#8b5e3c;letter-spacing:2px;margin-bottom:8px;font-weight:700}
+.hcp-tags{display:flex;flex-wrap:wrap;gap:6px}
+.hcp-tag{background:rgba(139,26,26,.07);border:1px solid rgba(139,26,26,.2);border-radius:4px;padding:4px 10px;font-size:12px;color:#8b1a1a;font-weight:600}
+
+/* 아코디언 섹션 */
+.reading-intro{padding:12px 20px;text-align:center;font-size:11px;color:rgba(92,58,30,.45);letter-spacing:1px;background:#fff9f0;border-bottom:1px solid rgba(139,94,60,.1)}
+.section{border-bottom:1px solid rgba(139,94,60,.12);background:#fff9f0}
 .section:last-child{border-bottom:none}
-.sec-oneliner{font-family:"Noto Sans KR",sans-serif;font-size:16px;font-weight:800;color:#6b1a0a;background:rgba(192,57,43,.1);border-left:4px solid var(--red);padding:10px 14px;margin-bottom:14px;border-radius:0 6px 6px 0;line-height:1.6}
-.sec-body{font-family:"Noto Sans KR",sans-serif;font-size:15.5px;font-weight:400;color:#2c1500;line-height:2.2;letter-spacing:.2px}
-.footer{text-align:center;color:rgba(245,230,200,.3);font-family:"Gowun Dodum",sans-serif;font-size:11px;padding-bottom:20px}
+.sec-oneliner-top{cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 20px;background:#fff9f0;transition:background .2s}
+.sec-oneliner-top:hover{background:#f5ede0}
+.sec-oneliner-inner{flex:1;font-family:"Noto Serif KR",serif;font-size:14px;font-weight:700;color:#2c1a0e;line-height:1.5}
+.sec-arrow-icon{font-size:11px;color:rgba(139,94,60,.45);transition:transform .3s;flex-shrink:0}
+.sec-title{font-size:12px;font-weight:700;color:#8b5e3c;letter-spacing:2px;padding:0 20px 10px;display:flex;justify-content:space-between;cursor:pointer;margin-bottom:0}
+.sec-title-text{display:flex;align-items:center;gap:6px}
+.sec-arrow{display:none}
+.sec-body-wrap{max-height:0;overflow:hidden;transition:max-height .4s ease,opacity .3s ease;opacity:0;background:#fffcf7}
+.sec-body-wrap.open{max-height:2000px;opacity:1}
+.sec-body{font-family:"Noto Sans KR",sans-serif;font-size:14.5px;font-weight:400;color:#2c1500;line-height:2.1;padding:0 20px 20px;border-top:1px solid rgba(139,94,60,.08)}
+.sec-oneliner{display:none}
+
+.footer{text-align:center;color:rgba(245,230,200,.3);font-family:"Gowun Dodum",sans-serif;font-size:11px;padding:20px 0 20px}
 .yundal-row{display:none;margin-top:8px}
 .yundal-row.show{display:flex}
-
-
 
 </style>
 </head>
@@ -285,164 +349,187 @@ function buildPrompt(saju, name) {
 
 function renderResult(saju, reading, name) {
   var p = saju.pillars;
+  var title = (saju.gender === "남") ? "도령" : "아씨";
   var html = "";
 
-  // 사주 그리드 - 컬러 배경
-  var SC_BG = ["#1d6a3a","#1a5276","#922b21","#5d4e75"]; // 시주/일주/월주/연주 순
-  // 시주/일주/월주/연주 순으로 표시
+  // 결과 이름 헤더
+  var sd = saju.solarDate, od = saju.originalDate;
+  var dateStr = od.isLunar ? od.year+"년 "+od.month+"월 "+od.day+"일 음력" : sd.year+"년 "+sd.month+"월 "+sd.day+"일";
+  var hourLabel = saju.hourStr === "모름" ? "시간 모름" : saju.hourStr;
+  html += "<div class=\"result-header\">"
+    +"<div class=\"result-name\"><span>"+escHtml(name)+"</span> "+title+"의 사주풀이</div>"
+    +"<div class=\"result-tags\">"
+    +"<span class=\"result-tag\">"+saju.animal+"</span>"
+    +"<span class=\"result-tag\">"+dateStr+"</span>"
+    +"<span class=\"result-tag\">"+hourLabel+"</span>"
+    +"<span class=\"result-tag gold\">"+saju.shingang.result+"</span>"
+    +"<span class=\"result-tag\">용신: "+saju.yongshin.primary+"</span>"
+    +"<span class=\"result-tag\">공망: "+saju.gongmang.map(function(g){return({子:"자",丑:"축",寅:"인",卯:"묘",辰:"진",巳:"사",午:"오",未:"미",申:"신",酉:"유",戌:"술",亥:"해"})[g]||g;}).join(" ")+"</span>"
+    +"</div></div>";
+
+  // 만세력 배너
+  html += "<div class=\"divider-banner\"><span>📜</span><span class=\"divider-text\">만 세 력</span><span>📜</span></div>";
+
+  // 만세력 그리드 - 행 기반 (시주/일주/월주/연주 순)
   var pillarOrder = [3,2,1,0];
   var pillarLbls = ["시주","일주","월주","연주"];
+
+  // 헤더 행
   html += "<div class=\"saju-grid\">";
-  for (var oi = 0; oi < 4; oi++) {
-    var idx = pillarOrder[oi];
-    var pl = p[idx];
-    var bg = SC_BG[oi];
+  for (var i=0; i<4; i++) {
+    html += "<div class=\"col-header\">"+pillarLbls[i]+"</div>";
+  }
+  // 천간 행
+  for (var i=0; i<4; i++) {
+    var pl = p[pillarOrder[i]];
     if (pl) {
-      html += "<div class=\"sc\" style=\"background:"+bg+"\">"
-        +"<div class=\"sc-lbl\">"+pl.label+"</div>"
-        +"<div class=\"sc-sky\">"+pl.cg+"</div>"
-        +"<div class=\"sc-sky-kr\">"+pl.cg_kr+"</div>"
-        +"<div class=\"sc-divider\"></div>"
-        +"<div class=\"sc-earth\">"+pl.jj+"</div>"
-        +"<div class=\"sc-earth-kr\">"+pl.jj_kr+"</div>"
-        +"<div class=\"sc-sub\">"+pl.sipseong_cg+" / "+pl.sipseong_jj+"<br>"+pl.woonsung+"</div>"
-        +"</div>";
+      html += "<div class=\"col-sky\"><span class=\"sky-char\">"+pl.cg+"</span><span class=\"sky-kr\">"+pl.cg_kr+"</span></div>";
     } else {
-      html += "<div class=\"sc\" style=\"background:"+bg+";opacity:.45\">"
-        +"<div class=\"sc-lbl\">"+pillarLbls[oi]+"</div>"
-        +"<div style=\"color:rgba(255,255,255,.7);font-size:12px;padding:24px 0\">시간<br>미상</div>"
-        +"</div>";
+      html += "<div class=\"col-sky empty\">—</div>";
+    }
+  }
+  // 지지 행
+  for (var i=0; i<4; i++) {
+    var pl = p[pillarOrder[i]];
+    if (pl) {
+      html += "<div class=\"col-earth\"><span class=\"earth-char\">"+pl.jj+"</span><span class=\"earth-kr\">"+pl.jj_kr+"</span></div>";
+    } else {
+      html += "<div class=\"col-earth empty\">—</div>";
+    }
+  }
+  // 하단 정보 행
+  for (var i=0; i<4; i++) {
+    var pl = p[pillarOrder[i]];
+    if (pl) {
+      html += "<div class=\"col-sub\">"+pl.sipseong_cg+" / "+pl.sipseong_jj+"<br>"+pl.woonsung+"</div>";
+    } else {
+      html += "<div class=\"col-sub empty\">—</div>";
     }
   }
   html += "</div>";
 
   // 정보 배지
-  var sd = saju.solarDate, od = saju.originalDate;
-  var dateStr = od.isLunar ? od.year+"년 "+od.month+"월 "+od.day+"일 음력 → 양력 "+sd.year+"."+sd.month+"."+sd.day : sd.year+"년 "+sd.month+"월 "+sd.day+"일";
+  var relArr = [...saju.relations.hap, ...saju.relations.chung, ...saju.relations.pa];
   html += "<div class=\"info-row\">";
   html += "<span class=\"badge\">"+saju.animal+"</span>";
   html += "<span class=\"badge\">"+dateStr+"</span>";
-  if (saju.hourStr !== "모름") html += "<span class=\"badge\">"+saju.hourStr+"</span>";
   html += "<span class=\"badge strong\">"+saju.shingang.result+"</span>";
-  html += "<span class=\"badge\">용신: "+saju.yongshin.primary+"</span>";
-  html += "<span class=\"badge\">공망: "+saju.gongmang.join(" ")+"</span>";
+  html += "<span class=\"badge gold\">용신: "+saju.yongshin.primary+" 기운</span>";
+  if (saju.gongmang.length) html += "<span class=\"badge\">공망: "+saju.gongmang.map(function(g){return({子:"자",丑:"축",寅:"인",卯:"묘",辰:"진",巳:"사",午:"오",未:"미",申:"신",酉:"유",戌:"술",亥:"해"})[g]||g;}).join(" ")+"</span>";
   html += "</div>";
 
-  // 오행 바
+  // 오행 분포
   var oh = saju.ohaengCount;
-  var total = Object.values(oh).reduce(function(a,b){return a+b;},0);
-  html += "<div class=\"oh-bar\"><div style=\"font-size:12px;font-weight:700;color:var(--wood);margin-bottom:8px\">⚖️ 오행 분포</div>";
-  for (var k in oh) {
-    var pct = Math.round(oh[k]/total*100);
-    html += "<div class=\"oh-row\"><span class=\"oh-lbl\" style=\"color:"+OH_COLORS[k]+"\">"+k+"</span><div class=\"oh-track\"><div class=\"oh-fill\" style=\"width:"+pct+"%;background:"+OH_COLORS[k]+"\"></div></div><span style=\"font-size:11px;width:30px;text-align:right\">"+pct+"%</span></div>";
-  }
+  var ohTotal = Object.values(oh).reduce(function(a,b){return a+b;},0);
+  var ohColors = {목:"#2d8a3e",화:"#c0392b",토:"#c8941a",금:"#7f8c8d",수:"#2471a3"};
+  html += "<div class=\"oh-bar\">";
+  ["목","화","토","금","수"].forEach(function(k) {
+    var pct = ohTotal > 0 ? Math.round(oh[k]/ohTotal*100) : 0;
+    html += "<div class=\"oh-row\">"
+      +"<div class=\"oh-name\" style=\"color:"+ohColors[k]+"\">"+k+"</div>"
+      +"<div class=\"oh-track\"><div class=\"oh-fill\" style=\"width:"+pct+"%;background:"+ohColors[k]+";\"></div></div>"
+      +"<div class=\"oh-pct\">"+pct+"%</div>"
+      +"</div>";
+  });
   html += "</div>";
 
   // 합충파
-  var rel = saju.relations;
-  var relItems = [].concat(rel.hap, rel.chung, rel.pa);
-  if (relItems.length > 0) {
-    html += "<div style=\"margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed rgba(107,58,31,.3)\"><div style=\"font-size:12px;font-weight:700;color:var(--wood);margin-bottom:6px\">🔗 합충파</div><div style=\"display:flex;flex-wrap:wrap;gap:6px\">";
-    relItems.forEach(function(r){ html += "<span class=\"badge\">"+r+"</span>"; });
+  if (relArr.length > 0) {
+    html += "<div class=\"hcp-wrap\"><div class=\"hcp-lbl\">합 충 파</div><div class=\"hcp-tags\">";
+    relArr.forEach(function(r){ html += "<span class=\"hcp-tag\">"+cleanBody(escHtml(r))+"</span>"; });
     html += "</div></div>";
   }
 
-  // AI 해설
-  var lines = reading.split("\n");
-  var sections = [], cur = null;
+  // 사주풀이 배너
+  html += "<div class=\"divider-banner\"><span>🍶</span><span class=\"divider-text\">사 주 풀 이</span><span>🍶</span></div>";
+  html += "<div class=\"reading-intro\">항목을 누르면 풀이가 펼쳐져유</div>";
+
+  // 해설 섹션 파싱 & 아코디언
+  var rawText = reading;
+  var sectionEmojis = ["🌟","💪","🎯","💕","💰","🌿","🍶"];
+  var sections = [];
+  var lines = rawText.split("\n").map(function(l){return l.trim();}).filter(function(l){return l.length>0;});
+  var cur = null;
   lines.forEach(function(line) {
-    var t = line.trim(); if (!t) return;
-    if (EMOJIS.some(function(e){return t.startsWith(e);})) {
+    var isTitle = false;
+    for (var ei=0; ei<sectionEmojis.length; ei++) {
+      if (line.startsWith(sectionEmojis[ei])) { isTitle=true; break; }
+    }
+    if (isTitle) {
       if (cur) sections.push(cur);
-      cur = {title:t, body:[]};
-    } else if (cur) cur.body.push(t);
+      cur = {title: line, body: []};
+    } else if (cur) {
+      cur.body.push(line);
+    }
   });
   if (cur) sections.push(cur);
 
-  function escHtml(t) {
-    return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  }
-  function cleanTitle(t) {
-    // 섹션 제목: 허용 이모지 + 한글만
-    return t.replace(/#{1,6}\s*/g,"").replace(/\*+/g,"").trim();
-  }
-  function cleanBody(t) {
-    t = t.replace(/#{1,6}\s*/g,"").replace(/\*+/g,"");
-    var allowedEmojis = ["🌟","💪","🎯","💕","💰","🌿","🍶"];
-    var ph = {};
-    allowedEmojis.forEach(function(e,i){
-      var k="§§§"+i+"§§§"; ph[k]=e;
-      t=t.split(e).join(k);
-    });
-    t = t.replace(/[^\uAC00-\uD7A3a-zA-Z0-9 .,!?~·…\-()%\n\r§]/g,"");
-    // 빈 괄호 제거 (한자 제거 후 남는 빈괄호)
-    t = t.replace(/\(\s*\)/g,"");
-    // 연속 공백 정리
-    t = t.replace(/ {2,}/g," ");
-    Object.keys(ph).forEach(function(k){ t=t.split(k).join(ph[k]); });
-    return t.trim();
-  }
-  if (sections.length >= 2) {
-    sections.forEach(function(s, secIdx) {
-      var bodyLines = s.body.map(function(line){ return cleanBody(escHtml(line)); }).filter(function(l){return l.length>0;});
-      var bodyHtml = "";
-      var summaryHtml = "";
-      if(bodyLines.length > 0) {
-        var firstLine = bodyLines[0];
-        if(firstLine.length < 80 && (firstLine.endsWith("!") || firstLine.endsWith("?") || firstLine.endsWith("유") || firstLine.endsWith("겨"))) {
-          summaryHtml = "<div class=\"sec-oneliner\">"+firstLine+"</div>";
-          bodyHtml = bodyLines.slice(1).join("<br>");
-        } else {
-          bodyHtml = bodyLines.join("<br>");
-        }
+  sections.forEach(function(s, secIdx) {
+    var bodyLines = s.body.map(function(l){return cleanBody(escHtml(l));}).filter(function(l){return l.length>0;});
+    var summaryLine = "";
+    var bodyContent = "";
+    if (bodyLines.length > 0) {
+      var first = bodyLines[0];
+      if (first.length < 80 && (first.endsWith("!") || first.endsWith("?") || first.endsWith("유") || first.endsWith("겨") || first.endsWith("슈"))) {
+        summaryLine = first;
+        bodyContent = bodyLines.slice(1).join("<br>");
+      } else {
+        bodyContent = bodyLines.join("<br>");
       }
-      var isFirst = (secIdx === 0);
-      var openClass = isFirst ? " open" : "";
-      var arrowStyle = isFirst ? "transform:rotate(180deg)" : "";
-      // 요약 한줄이 먼저, 그 다음 제목
-      html += "<div class=\"section\">"
-        +(summaryHtml ? "<div class=\"sec-oneliner-top\" onclick=\"toggleSectionByOneliner(this)\">"
-          +summaryHtml.replace('class=\"sec-oneliner\"','class=\"sec-oneliner-inner\"')
-          +"</div>" : "")
-        +"<div class=\"sec-title\" onclick=\"toggleSection(this)\">"
-        +"<span class=\"sec-title-text\">"+cleanTitle(escHtml(s.title))+"</span>"
-        +"<span class=\"sec-arrow\" style=\""+arrowStyle+"\">▼</span>"
-        +"</div>"
-        +"<div class=\"sec-body-wrap"+openClass+"\"><div class=\"sec-body\">"+bodyHtml+"</div></div>"
+    }
+    var isFirst = (secIdx === 0);
+    var openClass = isFirst ? " open" : "";
+    var arrowRot = isFirst ? "transform:rotate(180deg)" : "";
+    var titleClean = cleanTitle(escHtml(s.title));
+
+    html += "<div class=\"section\">";
+    // 요약 한줄 - 클릭 가능
+    if (summaryLine) {
+      html += "<div class=\"sec-oneliner-top\" onclick=\"toggleByOneliner(this)\">"
+        +"<span class=\"sec-oneliner-inner\">"+summaryLine+"</span>"
+        +"<span class=\"sec-arrow-icon\" style=\""+arrowRot+"\">▼</span>"
         +"</div>";
-    });
-  } else {
-    var lines = reading.split("\n").map(function(l){ return cleanBody(escHtml(l)); });
-    html += "<div class=\"section\"><div class=\"sec-body\">"+lines.join("<br>")+"</div></div>";
-  }
+    }
+    // 섹션 제목
+    html += "<div class=\"sec-title\" onclick=\"toggleSection(this)\">"
+      +"<span class=\"sec-title-text\">"+titleClean+"</span>"
+      +"</div>";
+    // 본문
+    html += "<div class=\"sec-body-wrap"+openClass+"\">"
+      +"<div class=\"sec-body\">"+bodyContent+"</div>"
+      +"</div>";
+    html += "</div>";
+  });
 
   document.getElementById("resultBody").innerHTML = html;
-}
-
-function resetApp() {
-  document.getElementById("formSection").style.display = "block";
-  document.getElementById("result").classList.remove("show");
-  document.getElementById("resetBtn").style.display = "none";
-  document.getElementById("speech").textContent = "어이~ 손님! 어서오슈~ 오늘 어디서 바람이 불어왔수? 어디 생년월일 한번 내보슈, 주모가 팔자 한번 봐드리리다!";
-  window.scrollTo({top:0,behavior:"smooth"});
+  document.getElementById("result").style.display = "block";
+  document.getElementById("result").scrollIntoView({behavior:"smooth"});
 }
 
   function toggleSection(titleEl) {
     var wrap = titleEl.nextElementSibling;
-    var arrow = titleEl.querySelector('.sec-arrow');
+    if (!wrap || !wrap.classList.contains('sec-body-wrap')) return;
+    var onelineEl = titleEl.previousElementSibling;
+    var arrow = onelineEl ? onelineEl.querySelector('.sec-arrow-icon') : null;
     if (wrap.classList.contains('open')) {
       wrap.classList.remove('open');
-      arrow.style.transform = '';
+      if (arrow) arrow.style.transform = '';
     } else {
       wrap.classList.add('open');
-      arrow.style.transform = 'rotate(180deg)';
+      if (arrow) arrow.style.transform = 'rotate(180deg)';
     }
   }
-  function toggleSectionByOneliner(onelineEl) {
-    // 요약줄 클릭하면 바로 아래 sec-title 찾아서 토글
+  function toggleByOneliner(onelineEl) {
     var titleEl = onelineEl.nextElementSibling;
-    if (titleEl && titleEl.classList.contains('sec-title')) {
-      toggleSection(titleEl);
+    var arrow = onelineEl.querySelector('.sec-arrow-icon');
+    var wrap = titleEl ? titleEl.nextElementSibling : null;
+    if (!wrap || !wrap.classList.contains('sec-body-wrap')) return;
+    if (wrap.classList.contains('open')) {
+      wrap.classList.remove('open');
+      if (arrow) arrow.style.transform = '';
+    } else {
+      wrap.classList.add('open');
+      if (arrow) arrow.style.transform = 'rotate(180deg)';
     }
   }
 </script>
