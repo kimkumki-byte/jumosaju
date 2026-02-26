@@ -235,7 +235,7 @@ async function getSaju() {
   const lt = setInterval(() => { document.getElementById('loadTxt').textContent = LOADS[li++ % LOADS.length]; }, 1800);
 
   try {
-    const res = await fetch('/api/saju', {
+    const res = await fetch('/.netlify/functions/saju', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ year: y, month: m, day: d, hourStr: h, isLunar: calType === 'lunar', isYundal, gender, name })
