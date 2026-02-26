@@ -233,7 +233,7 @@ async function getSaju() {
 
   try {
     // 서버에서 사주계산 + 해설 한번에
-    var calcRes = await fetch("/.netlify/functions/saju", {
+    var calcRes = await fetch("/api/saju", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({year:y, month:m, day:d, hourStr:h, isLunar:calType==="lunar", isYundal:isYundal, gender:gender, name:name})

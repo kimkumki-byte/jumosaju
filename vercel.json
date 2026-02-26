@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/saju.js": {
+      "maxDuration": 30
+    }
+  }
+}
