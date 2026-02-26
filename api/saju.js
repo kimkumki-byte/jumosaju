@@ -204,18 +204,16 @@ function buildPrompt(data,name,title){
   const overOh=Object.keys(oh).sort((a,b)=>oh[b]-oh[a])[0];
   const lackOh=Object.keys(oh).sort((a,b)=>oh[a]-oh[b])[0];
   const ilju=p[2]?p[2].cg_kr+p[2].jj_kr:'미상';
-  return `조선 주막 주모로서 사주 해설을 작성하라.
+  return `조선 주막 주모. 사주 해설 작성.
 
-[사주 데이터]
-${name} ${title} / ${dStr} / ${data.animal} / ${data.hourStr}
+[데이터] ${name} ${title} / ${dStr} / ${data.animal} / ${data.hourStr}
 ${pStr}
-오행: ${ohStr} | ${data.shingang.result}(${data.shingang.ratio}%) | 용신:${data.yongshin.primary} | 공망:${data.gongmang.join(',')} | 합충파:${rel}
-과다:${overOh} 부족:${lackOh}
+오행:${ohStr} | ${data.shingang.result}(${data.shingang.ratio}%) | 용신:${data.yongshin.primary} | 공망:${data.gongmang.join(',')} | 합충파:${rel} | 과다:${overOh} 부족:${lackOh}
 
-[말투] 충청도 사투리. ~유/~겠슈/~이랑께유/~구먼유로 문장 끝내기. 합니다/요/어요 금지. 이름은 "${name} ${title}"로만 호칭.
-[형식] ## 마크다운 금지. 한자 금지. 숫자 언급 금지.
+[말투] 충청도 사투리. 문장끝: ~유/~겠슈/~구먼유/~이랑께유. ~다 그려~/~그렇구먼유 자연스럽게 섞기. 합니다/요/어요 금지. 이름="${name} ${title}"로만. 마크다운/한자/숫자 금지.
 
-7섹션 순서대로. 각 섹션: 이모지+제목 → 핵심한줄(임팩트강하게, !로끝) → 본문4문장(팩트폭력+비유+충청도말투)
+[섹션 형식] 이모지+제목 → 핵심한줄(!로끝, 임팩트강하게) → 본문4문장
+모든 섹션 동일하게 핵심한줄 반드시 포함. 🍶주모의한마디도 핵심한줄 필수.
 
 🌟 총평
 💪 일주 분석 (${ilju} 일주)
@@ -229,7 +227,7 @@ ${pStr}
 
 function callAnthropic(apiKey,prompt){
   return new Promise((resolve,reject)=>{
-    const body=JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1800,messages:[{role:'user',content:prompt}]});
+    const body=JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1500,messages:[{role:'user',content:prompt}]});
     const req=https.request({hostname:'api.anthropic.com',path:'/v1/messages',method:'POST',
       headers:{'Content-Type':'application/json; charset=utf-8','x-api-key':apiKey,'anthropic-version':'2023-06-01','Content-Length':Buffer.byteLength(body)}
     },res=>{
