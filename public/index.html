@@ -337,16 +337,20 @@ function renderResult(saju, reading, name) {
     return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
   function cleanTitle(t) {
-    // ** 마크다운 제거
-    return t.replace(/\*\*/g,"");
+    // ## ** 마크다운 제거, 도형 이모지 제거
+    return t.replace(/#{1,6}\s*/g,"").replace(/\*\*/g,"").replace(/[\u25A0-\u25FF\u2600-\u26FF\u2700-\u27BF]/g,"").trim();
+  }
+  function cleanBody(t) {
+    // ## ** 마크다운 제거, 도형 이모지(🔷🔶◆◇■□▶ 등) 제거
+    return t.replace(/#{1,6}\s*/g,"").replace(/\*\*/g,"").replace(/\*/g,"").replace(/[\u25A0-\u25FF\u2666\u2665\u2663\u2660]/g,"").trim();
   }
   if (sections.length >= 2) {
     sections.forEach(function(s) {
-      var bodyHtml = s.body.map(function(line){ return escHtml(line).replace(/\*\*/g,""); }).join("<br>");
+      var bodyHtml = s.body.map(function(line){ return cleanBody(escHtml(line)); }).join("<br>");
       html += "<div class=\"section\"><div class=\"sec-title\">"+cleanTitle(escHtml(s.title))+"</div><div class=\"sec-body\">"+bodyHtml+"</div></div>";
     });
   } else {
-    var lines = reading.split("\n").map(function(l){ return escHtml(l).replace(/\*\*/g,""); });
+    var lines = reading.split("\n").map(function(l){ return cleanBody(escHtml(l)); });
     html += "<div class=\"section\"><div class=\"sec-body\">"+lines.join("<br>")+"</div></div>";
   }
 
