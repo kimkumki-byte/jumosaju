@@ -215,20 +215,22 @@ function callAnthropic(apiKey,prompt){
   });
 }
 
-exports.handler=async function(event){
-  const H={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8'};
-  if(event.httpMethod==='OPTIONS')return{statusCode:200,headers:H};
-  if(event.httpMethod!=='POST')return{statusCode:405,body:'Method Not Allowed'};
+module.exports=async function(req,res){
+  res.setHeader('Access-Control-Allow-Origin','*');
+  res.setHeader('Access-Control-Allow-Headers','Content-Type');
+  res.setHeader('Content-Type','application/json; charset=utf-8');
+  if(req.method==='OPTIONS'){res.status(200).end();return;}
+  if(req.method!=='POST'){res.status(405).send('Method Not Allowed');return;}
   const apiKey=process.env.ANTHROPIC_API_KEY;
-  if(!apiKey)return{statusCode:500,headers:H,body:JSON.stringify({error:'API key not configured'})};
+  if(!apiKey){res.status(500).json({error:'API key not configured'});return;}
   try{
-    const input=JSON.parse(event.body);
-    const sajuData=fullCalc(input);
-    const prompt=buildPrompt(sajuData,input.name||'손님');
+    const body=typeof req.body==='string'?JSON.parse(req.body):req.body;
+    const sajuData=fullCalc(body);
+    const prompt=buildPrompt(sajuData,body.name||'손님');
     const llm=await callAnthropic(apiKey,prompt);
     if(llm.error)throw new Error(llm.error.message||'API오류');
-    return{statusCode:200,headers:H,body:JSON.stringify({saju:sajuData,reading:llm.content[0].text})};
+    res.status(200).json({saju:sajuData,reading:llm.content[0].text});
   }catch(err){
-    return{statusCode:500,headers:H,body:JSON.stringify({error:err.message})};
+    res.status(500).json({error:err.message});
   }
 };
